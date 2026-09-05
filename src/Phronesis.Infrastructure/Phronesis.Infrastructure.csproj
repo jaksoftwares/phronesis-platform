@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Phronesis.Application\Phronesis.Application.csproj" />
+    <ProjectReference Include="..\Phronesis.Domain\Phronesis.Domain.csproj" />
+    <ProjectReference Include="..\Phronesis.Shared\Phronesis.Shared.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
