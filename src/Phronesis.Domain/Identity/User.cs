@@ -10,6 +10,9 @@ public class User : BaseEntity
     public string LastName { get; private set; }
     public bool IsActive { get; private set; }
 
+    private readonly List<UserRole> _userRoles = new();
+    public IReadOnlyCollection<UserRole> UserRoles => _userRoles.AsReadOnly();
+
     // Required by EF Core
     private User() { }
 

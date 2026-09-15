@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Phronesis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Phronesis.Infrastructure.Persistence;
 namespace Phronesis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhronesisDbContext))]
-    partial class PhronesisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915190310_AddRbcaSchema")]
+    partial class AddRbcaSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
