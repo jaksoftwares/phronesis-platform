@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Phronesis.Application.Common.Interfaces;
 using Phronesis.Domain.Common;
 using Phronesis.Domain.Identity;
 using System.Reflection;
 
 namespace Phronesis.Infrastructure.Persistence;
 
-public class PhronesisDbContext : DbContext
+public class PhronesisDbContext : DbContext, IApplicationDbContext
 {
     public PhronesisDbContext(DbContextOptions<PhronesisDbContext> options) : base(options)
     {
@@ -14,6 +15,7 @@ public class PhronesisDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<UserSession> UserSessions => Set<UserSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

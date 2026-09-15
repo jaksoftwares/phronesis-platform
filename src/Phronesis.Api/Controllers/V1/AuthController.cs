@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Phronesis.Application.Authentication;
+using Phronesis.Application.Authentication.DTOs;
+using Phronesis.Shared.Responses;
 
 namespace Phronesis.Api.Controllers.V1;
 
@@ -6,17 +9,76 @@ namespace Phronesis.Api.Controllers.V1;
 [Route("api/v1/[controller]")]
 public class AuthController : ControllerBase
 {
+    private readonly IAuthService _authService;
+
+    public AuthController(IAuthService authService)
+    {
+        _authService = authService;
+    }
+
     [HttpPost("register")]
-    public IActionResult Register() => StatusCode(501);
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
+    {
+        await _authService.RegisterAsync(request, cancellationToken);
+        return Ok(ApiResponse.Ok("User registered successfully."));
+    }
 
     [HttpPost("login")]
-    public IActionResult Login() => StatusCode(501);
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
+    {
+        var deviceInfo = Request.Headers["User-Agent"].ToString();
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-    [HttpPost("logout")]
-    public IActionResult Logout() => StatusCode(501);
+        var response = await _authService.LoginAsync(request, deviceInfo, ipAddress, cancellationToken);
+
+        SetRefreshTokenCookie(response.RefreshToken);
+
+        return Ok(ApiResponse<AuthResponse>.Ok(new AuthResponse { AccessToken = response.AccessToken }, "Login successful."));
+    }
 
     [HttpPost("refresh")]
-    public IActionResult Refresh() => StatusCode(501);
+    public async Task<IActionResult> Refresh(CancellationToken cancellationToken)
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return Unauthorized(ApiResponse.Failure("Refresh token is missing."));
+        }
+
+        var deviceInfo = Request.Headers["User-Agent"].ToString();
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var response = await _authService.RefreshTokenAsync(refreshToken, deviceInfo, ipAddress, cancellationToken);
+
+        SetRefreshTokenCookie(response.RefreshToken);
+
+        return Ok(ApiResponse<AuthResponse>.Ok(new AuthResponse { AccessToken = response.AccessToken }, "Token refreshed."));
+    }
+    
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (!string.IsNullOrEmpty(refreshToken))
+        {
+            await _authService.RevokeTokenAsync(refreshToken, cancellationToken);
+        }
+
+        Response.Cookies.Delete("refreshToken");
+        return Ok(ApiResponse.Ok("Logged out successfully."));
+    }
+
+    private void SetRefreshTokenCookie(string token)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true, // Should be true in production, using HTTPS
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
+        Response.Cookies.Append("refreshToken", token, cookieOptions);
+    }
 
     [HttpPost("verify-email")]
     public IActionResult VerifyEmail() => StatusCode(501);
