@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Phronesis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Phronesis.Infrastructure.Persistence;
 namespace Phronesis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhronesisDbContext))]
-    partial class PhronesisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915205507_AddAcademicTaxonomy")]
+    partial class AddAcademicTaxonomy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,46 +154,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.ToTable("GradeLevels", (string)null);
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Academic.GradeSubject", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("GradeLevelId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsCore")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PeriodsPerWeek")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("SubjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("GradeLevelId", "SubjectId")
-                        .IsUnique();
-
-                    b.ToTable("GradeSubjects", (string)null);
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Academic.LearningObjective", b =>
                 {
                     b.Property<Guid>("Id")
@@ -306,40 +269,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.HasIndex("StrandId");
 
                     b.ToTable("SubStrands", (string)null);
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Academic.SubStrandPrerequisite", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PrerequisiteId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SubStrandId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PrerequisiteId");
-
-                    b.HasIndex("SubStrandId", "PrerequisiteId")
-                        .IsUnique();
-
-                    b.ToTable("SubStrandPrerequisites", (string)null);
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Academic.Subject", b =>
@@ -811,48 +740,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.ToTable("TeacherApplications", (string)null);
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Users.TeacherCompetence", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("GradeLevelId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("SubjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TeacherProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GradeLevelId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("TeacherProfileId", "SubjectId", "GradeLevelId")
-                        .IsUnique();
-
-                    b.ToTable("TeacherCompetences", (string)null);
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Users.TeacherDocument", b =>
                 {
                     b.Property<Guid>("Id")
@@ -969,25 +856,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.Navigation("EducationLevel");
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Academic.GradeSubject", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Academic.GradeLevel", "GradeLevel")
-                        .WithMany()
-                        .HasForeignKey("GradeLevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Phronesis.Domain.Academic.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("GradeLevel");
-
-                    b.Navigation("Subject");
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Academic.LearningObjective", b =>
                 {
                     b.HasOne("Phronesis.Domain.Academic.SubStrand", "SubStrand")
@@ -1019,25 +887,6 @@ namespace Phronesis.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Strand");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Academic.SubStrandPrerequisite", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Academic.SubStrand", "Prerequisite")
-                        .WithMany()
-                        .HasForeignKey("PrerequisiteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Phronesis.Domain.Academic.SubStrand", "SubStrand")
-                        .WithMany()
-                        .HasForeignKey("SubStrandId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Prerequisite");
-
-                    b.Navigation("SubStrand");
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Identity.RolePermission", b =>
@@ -1156,33 +1005,6 @@ namespace Phronesis.Infrastructure.Migrations
                         .HasForeignKey("TeacherProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("TeacherProfile");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Users.TeacherCompetence", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Academic.GradeLevel", "GradeLevel")
-                        .WithMany()
-                        .HasForeignKey("GradeLevelId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Phronesis.Domain.Academic.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Phronesis.Domain.Users.TeacherProfile", "TeacherProfile")
-                        .WithMany()
-                        .HasForeignKey("TeacherProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GradeLevel");
-
-                    b.Navigation("Subject");
 
                     b.Navigation("TeacherProfile");
                 });

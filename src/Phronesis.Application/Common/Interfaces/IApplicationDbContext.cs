@@ -20,5 +20,16 @@ public interface IApplicationDbContext
     DbSet<Phronesis.Domain.Users.TeacherApplication> TeacherApplications { get; }
     DbSet<Phronesis.Domain.Users.TeacherDocument> TeacherDocuments { get; }
 
+    DbSet<Phronesis.Domain.Academic.Curriculum> Curricula { get; }
+    DbSet<Phronesis.Domain.Academic.EducationLevel> EducationLevels { get; }
+    DbSet<Phronesis.Domain.Academic.Subject> Subjects { get; }
+    DbSet<Phronesis.Domain.Academic.Strand> Strands { get; }
+    DbSet<Phronesis.Domain.Academic.SubStrand> SubStrands { get; }
+    DbSet<Phronesis.Domain.Academic.LearningObjective> LearningObjectives { get; }
+
+    DbSet<Phronesis.Domain.Academic.GradeSubject> GradeSubjects { get; }
+    DbSet<Phronesis.Domain.Academic.SubStrandPrerequisite> SubStrandPrerequisites { get; }
+    DbSet<Phronesis.Domain.Users.TeacherCompetence> TeacherCompetences { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

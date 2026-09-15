@@ -2,29 +2,25 @@ using Phronesis.Domain.Common;
 
 namespace Phronesis.Domain.Academic;
 
-public class GradeLevel : BaseEntity
+public class EducationLevel : BaseEntity
 {
-    public Guid? EducationLevelId { get; private set; } // Nullable to not break existing instances without migration
+    public Guid CurriculumId { get; private set; }
     public string Name { get; private set; }
     public string Description { get; private set; }
     public int SortOrder { get; private set; }
     public bool IsActive { get; private set; }
 
-    public EducationLevel? EducationLevel { get; private set; }
+    public Curriculum Curriculum { get; private set; } = null!;
 
-    private GradeLevel() { }
+    private EducationLevel() { }
 
-    public GradeLevel(string name, string description, int sortOrder)
+    public EducationLevel(Guid curriculumId, string name, string description, int sortOrder)
     {
+        CurriculumId = curriculumId;
         Name = name;
         Description = description;
         SortOrder = sortOrder;
         IsActive = true;
-    }
-
-    public void SetEducationLevel(Guid educationLevelId)
-    {
-        EducationLevelId = educationLevelId;
     }
 
     public void Deactivate() => IsActive = false;

@@ -27,6 +27,17 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<Phronesis.Domain.Users.TeacherApplication> TeacherApplications => Set<Phronesis.Domain.Users.TeacherApplication>();
     public DbSet<Phronesis.Domain.Users.TeacherDocument> TeacherDocuments => Set<Phronesis.Domain.Users.TeacherDocument>();
 
+    public DbSet<Phronesis.Domain.Academic.Curriculum> Curricula => Set<Phronesis.Domain.Academic.Curriculum>();
+    public DbSet<Phronesis.Domain.Academic.EducationLevel> EducationLevels => Set<Phronesis.Domain.Academic.EducationLevel>();
+    public DbSet<Phronesis.Domain.Academic.Subject> Subjects => Set<Phronesis.Domain.Academic.Subject>();
+    public DbSet<Phronesis.Domain.Academic.Strand> Strands => Set<Phronesis.Domain.Academic.Strand>();
+    public DbSet<Phronesis.Domain.Academic.SubStrand> SubStrands => Set<Phronesis.Domain.Academic.SubStrand>();
+    public DbSet<Phronesis.Domain.Academic.LearningObjective> LearningObjectives => Set<Phronesis.Domain.Academic.LearningObjective>();
+
+    public DbSet<Phronesis.Domain.Academic.GradeSubject> GradeSubjects => Set<Phronesis.Domain.Academic.GradeSubject>();
+    public DbSet<Phronesis.Domain.Academic.SubStrandPrerequisite> SubStrandPrerequisites => Set<Phronesis.Domain.Academic.SubStrandPrerequisite>();
+    public DbSet<Phronesis.Domain.Users.TeacherCompetence> TeacherCompetences => Set<Phronesis.Domain.Users.TeacherCompetence>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
