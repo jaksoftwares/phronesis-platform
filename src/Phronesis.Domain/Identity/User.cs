@@ -9,6 +9,9 @@ public class User : BaseEntity
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public bool IsActive { get; private set; }
+    public bool MustChangePassword { get; private set; }
+
+    public Phronesis.Domain.Organization.StaffProfile? StaffProfile { get; private set; }
 
     private readonly List<UserRole> _userRoles = new();
     public IReadOnlyCollection<UserRole> UserRoles => _userRoles.AsReadOnly();
@@ -23,7 +26,12 @@ public class User : BaseEntity
         FirstName = firstName;
         LastName = lastName;
         IsActive = true;
+        MustChangePassword = false;
     }
+
+    public void RequirePasswordChange() => MustChangePassword = true;
+    public void PasswordChanged() => MustChangePassword = false;
+    public void UpdatePasswordHash(string newHash) => PasswordHash = newHash;
 
     public void Deactivate()
     {

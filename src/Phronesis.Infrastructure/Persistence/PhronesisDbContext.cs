@@ -18,6 +18,14 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<UserSession> UserSessions => Set<UserSession>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<Phronesis.Domain.Organization.StaffProfile> StaffProfiles => Set<Phronesis.Domain.Organization.StaffProfile>();
+    public DbSet<Phronesis.Domain.Academic.GradeLevel> GradeLevels => Set<Phronesis.Domain.Academic.GradeLevel>();
+    public DbSet<Phronesis.Domain.Users.LearnerProfile> LearnerProfiles => Set<Phronesis.Domain.Users.LearnerProfile>();
+    public DbSet<Phronesis.Domain.Users.GuardianProfile> GuardianProfiles => Set<Phronesis.Domain.Users.GuardianProfile>();
+    public DbSet<Phronesis.Domain.Users.LearnerGuardian> LearnerGuardians => Set<Phronesis.Domain.Users.LearnerGuardian>();
+    public DbSet<Phronesis.Domain.Users.TeacherProfile> TeacherProfiles => Set<Phronesis.Domain.Users.TeacherProfile>();
+    public DbSet<Phronesis.Domain.Users.TeacherApplication> TeacherApplications => Set<Phronesis.Domain.Users.TeacherApplication>();
+    public DbSet<Phronesis.Domain.Users.TeacherDocument> TeacherDocuments => Set<Phronesis.Domain.Users.TeacherDocument>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

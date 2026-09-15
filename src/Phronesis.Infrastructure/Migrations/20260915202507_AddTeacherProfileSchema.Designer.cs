@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Phronesis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Phronesis.Infrastructure.Persistence;
 namespace Phronesis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhronesisDbContext))]
-    partial class PhronesisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915202507_AddTeacherProfileSchema")]
+    partial class AddTeacherProfileSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -430,110 +433,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.ToTable("LearnerProfiles", (string)null);
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Users.TeacherApplication", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AdminNotes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("InterviewDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InterviewLink")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("InterviewNotes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<bool>("PolicyAccepted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ReviewedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("ReviewerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SubmittedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TeacherProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeacherProfileId");
-
-                    b.ToTable("TeacherApplications", (string)null);
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Users.TeacherDocument", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DocumentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileUri")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("RejectionReason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<Guid>("TeacherApplicationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VerificationStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeacherApplicationId");
-
-                    b.ToTable("TeacherDocuments", (string)null);
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Users.TeacherProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -694,28 +593,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Users.TeacherApplication", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Users.TeacherProfile", "TeacherProfile")
-                        .WithMany()
-                        .HasForeignKey("TeacherProfileId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TeacherProfile");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Users.TeacherDocument", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Users.TeacherApplication", "TeacherApplication")
-                        .WithMany("Documents")
-                        .HasForeignKey("TeacherApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TeacherApplication");
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Users.TeacherProfile", b =>
                 {
                     b.HasOne("Phronesis.Domain.Identity.User", "User")
@@ -749,11 +626,6 @@ namespace Phronesis.Infrastructure.Migrations
             modelBuilder.Entity("Phronesis.Domain.Users.LearnerProfile", b =>
                 {
                     b.Navigation("Guardians");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Users.TeacherApplication", b =>
-                {
-                    b.Navigation("Documents");
                 });
 #pragma warning restore 612, 618
         }

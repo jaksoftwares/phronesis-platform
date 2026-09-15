@@ -1,0 +1,21 @@
+# Walkthrough: M07 (Teacher Management & Professional Profiles)
+
+We have successfully engineered **M07**, establishing the professional **Teacher** ecosystem on the Phronesis platform!
+
+## 1. Domain Entities & Database
+- **Teacher Profile Entity**: Engineered the `TeacherProfile` class extending the base `User`. It tracks critical professional properties such as `Bio`, `Qualifications`, `ExperienceYears`, and `TeachingSkills`.
+- **Verification State Machine**: We established the `TeacherVerificationState` Enum (Pending, UnderReview, Verified, Rejected, Suspended).
+- **Default Lifecycle**: Newly created `TeacherProfiles` are rigidly initialized with a `Pending` state, ensuring no unauthorized users can teach or publish content without explicit workflow progression (which we will handle in M08).
+- **Database Rules**: Configured `DeleteBehavior.Cascade` on the Teacher Profile to guarantee full data deletion if the parent `User` record is destroyed (maintaining GDPR compliance).
+
+## 2. API Endpoints
+We built out the `TeachersController` to govern professional profile data flow:
+- `POST /api/v1/teachers/register`: Securely handles public registration. It creates the User identity, assigns the "Teacher" RBAC role, and creates the foundational `TeacherProfile` in the `Pending` state.
+- `GET /api/v1/teachers/{teacherId}/profile`: A public-facing endpoint allowing the platform to retrieve a verified teacher's professional details.
+- `PATCH /api/v1/teachers/me/profile`: Allows the teacher to update their Bio, Qualifications, and Experience. Crucially, we built in a domain rule that if a teacher updates their profile while `Rejected`, their status is reverted to `Pending` so they can trigger a new review in M08.
+
+## 3. Verification & Application
+- The EF Core Migration (`AddTeacherProfileSchema`) has been constructed and seamlessly applied to the database.
+- The `TeachersController` logic passes complete compilation checks with zero warnings or errors.
+
+**Phase 2** is progressing perfectly. We now have the `TeacherProfile` data structure ready to run through the compliance pipeline.

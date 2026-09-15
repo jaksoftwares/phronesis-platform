@@ -1,0 +1,28 @@
+# Walkthrough: M05 (Organization, Staff Profiles & Onboarding)
+
+We have successfully completed the engineering for **M05**, focusing on internal staff onboarding and employment tracking. This acts as the administrative foundation for the Phronesis platform, ensuring internal data integrity and security separation.
+
+## 1. Domain Modeling
+To adhere to the Single Responsibility Principle, we isolated employment data from the base `User` authentication logic.
+- **`Department` Enum**: Created an enum representing strict departmental boundaries (`Academic`, `Content`, `Support`, `Management`, `IT`) to ensure data integrity without hardcoding strings.
+- **`StaffProfile` Entity**: Engineered a domain entity linked 1-to-1 with a `User`, containing fields like `EmployeeId` (which is uniquely indexed), `Department`, `JobTitle`, `HireDate`, and an `IsActive` flag.
+
+## 2. Secure First-Time Login Workflow
+In line with your requirements, we implemented a robust workflow for securing newly onboarded staff accounts.
+- Added a **`MustChangePassword`** flag to the base `User` entity.
+- The `AuthService.LoginAsync` and `RefreshTokenAsync` methods were updated to inspect this flag and expose its value in the `AuthResponse` payload. This tells the frontend that the user is forced into a password change loop.
+- Built a new **`/api/v1/auth/change-password`** API endpoint which securely validates the temporary password, hashes the new password, and clears the `MustChangePassword` flag.
+
+## 3. Atomic Onboarding Endpoint
+Engineered the **`/api/v1/staff/onboard`** endpoint inside the new `StaffController`. This endpoint does the heavy lifting:
+- Checks for email uniqueness.
+- Validates the target RBAC `Role`.
+- Generates a highly secure, cryptographically random temporary password.
+- Atomically creates the `User` (with `MustChangePassword = true`), the `StaffProfile`, and the `UserRole` joining record using Entity Framework Core's innate transactional guarantees.
+- Returns the temporary password in the response for distribution.
+
+## 4. Verification & Validation
+- **Database Schema**: The `AddStaffProfileSchema` migration was successfully generated and applied to the database, bringing our tables in line with the new domain models.
+- **Compilation**: The backend compiles perfectly with `0 Errors`, verifying our dependency injections, routing, and domain relationships.
+
+With Phase 1 (M03-M05 Identity & Governance) now complete, we possess a professional-grade security perimeter. We are now clear to proceed to **Phase 2 - User Domains (Learner & Teacher Ecosystems)**!

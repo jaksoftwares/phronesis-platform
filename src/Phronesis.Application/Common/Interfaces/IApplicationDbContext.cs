@@ -11,6 +11,14 @@ public interface IApplicationDbContext
     DbSet<UserSession> UserSessions { get; }
     DbSet<UserRole> UserRoles { get; }
     DbSet<RolePermission> RolePermissions { get; }
+    DbSet<Phronesis.Domain.Organization.StaffProfile> StaffProfiles { get; }
+    DbSet<Phronesis.Domain.Academic.GradeLevel> GradeLevels { get; }
+    DbSet<Phronesis.Domain.Users.LearnerProfile> LearnerProfiles { get; }
+    DbSet<Phronesis.Domain.Users.GuardianProfile> GuardianProfiles { get; }
+    DbSet<Phronesis.Domain.Users.LearnerGuardian> LearnerGuardians { get; }
+    DbSet<Phronesis.Domain.Users.TeacherProfile> TeacherProfiles { get; }
+    DbSet<Phronesis.Domain.Users.TeacherApplication> TeacherApplications { get; }
+    DbSet<Phronesis.Domain.Users.TeacherDocument> TeacherDocuments { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

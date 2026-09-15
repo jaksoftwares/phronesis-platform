@@ -64,7 +64,8 @@ public class AuthService : IAuthService
         return new AuthResponse
         {
             AccessToken = accessToken,
-            RefreshToken = refreshToken
+            RefreshToken = refreshToken,
+            MustChangePassword = user.MustChangePassword
         };
     }
 
@@ -94,7 +95,8 @@ public class AuthService : IAuthService
         return new AuthResponse
         {
             AccessToken = newAccessToken,
-            RefreshToken = newRefreshToken
+            RefreshToken = newRefreshToken,
+            MustChangePassword = session.User.MustChangePassword
         };
     }
 
@@ -106,5 +108,25 @@ public class AuthService : IAuthService
             session.Revoke();
             await _context.SaveChangesAsync(cancellationToken);
         }
+    }
+
+    public async Task ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
+        
+        if (user == null || !_passwordHasher.Verify(request.TemporaryPassword, user.PasswordHash))
+        {
+            throw new DomainException("Invalid email or password.");
+        }
+
+        if (!user.MustChangePassword)
+        {
+            throw new DomainException("Password change is not required for this user.");
+        }
+
+        user.UpdatePasswordHash(_passwordHasher.Hash(request.NewPassword));
+        user.PasswordChanged();
+        
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

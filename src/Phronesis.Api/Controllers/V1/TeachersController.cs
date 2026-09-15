@@ -1,4 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Phronesis.Application.Authentication;
+using Phronesis.Application.Common.Interfaces;
+using Phronesis.Domain.Identity;
+using Phronesis.Domain.Users;
+using Phronesis.Infrastructure.Authentication;
+using Phronesis.Shared.Responses;
 
 namespace Phronesis.Api.Controllers.V1;
 
@@ -6,63 +13,97 @@ namespace Phronesis.Api.Controllers.V1;
 [Route("api/v1/teachers")]
 public class TeachersController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult ListTeachers() => StatusCode(501);
+    private readonly IApplicationDbContext _context;
+    private readonly IPasswordHasher _passwordHasher;
 
-    [HttpPost]
-    public IActionResult CreateTeacher() => StatusCode(501);
+    public TeachersController(IApplicationDbContext context, IPasswordHasher passwordHasher)
+    {
+        _context = context;
+        _passwordHasher = passwordHasher;
+    }
 
-    [HttpGet("{teacherId}")]
-    public IActionResult GetTeacher(string teacherId) => StatusCode(501);
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterTeacher([FromBody] RegisterTeacherRequest request, CancellationToken cancellationToken)
+    {
+        if (_context.Users.Any(u => u.Email == request.Email))
+        {
+            return BadRequest(ApiResponse.Failure("Email already in use."));
+        }
 
-    [HttpPatch("{teacherId}")]
-    public IActionResult UpdateProfile(string teacherId) => StatusCode(501);
+        var passwordHash = _passwordHasher.Hash(request.Password);
+        var user = new User(request.Email, passwordHash, request.FirstName, request.LastName);
+        var teacherProfile = new TeacherProfile(user.Id);
 
-    [HttpGet("{teacherId}/qualifications")]
-    public IActionResult GetQualifications(string teacherId) => StatusCode(501);
+        var role = _context.Roles.FirstOrDefault(r => r.Name == "Teacher");
+        if (role != null)
+        {
+            _context.UserRoles.Add(new UserRole(user.Id, role.Id));
+        }
 
-    [HttpPost("{teacherId}/qualifications")]
-    public IActionResult AddQualification(string teacherId) => StatusCode(501);
+        _context.Users.Add(user);
+        _context.TeacherProfiles.Add(teacherProfile);
+        
+        await _context.SaveChangesAsync(cancellationToken);
 
-    [HttpPatch("{teacherId}/qualifications/{qualificationId}")]
-    public IActionResult UpdateQualification(string teacherId, string qualificationId) => StatusCode(501);
+        return Ok(ApiResponse.Ok("Teacher registered successfully. Status is Pending verification."));
+    }
 
-    [HttpDelete("{teacherId}/qualifications/{qualificationId}")]
-    public IActionResult RemoveQualification(string teacherId, string qualificationId) => StatusCode(501);
+    [HttpGet("{teacherId}/profile")]
+    public async Task<IActionResult> GetProfile(Guid teacherId, CancellationToken cancellationToken)
+    {
+        var teacher = await _context.TeacherProfiles
+            .Include(t => t.User)
+            .FirstOrDefaultAsync(t => t.UserId == teacherId, cancellationToken);
 
-    [HttpGet("{teacherId}/subjects")]
-    public IActionResult GetSubjects(string teacherId) => StatusCode(501);
+        if (teacher == null) return NotFound("Teacher profile not found.");
 
-    [HttpPut("{teacherId}/subjects")]
-    public IActionResult SetSubjects(string teacherId) => StatusCode(501);
+        return Ok(ApiResponse<object>.Ok(new {
+            teacher.User.FirstName,
+            teacher.User.LastName,
+            teacher.Bio,
+            teacher.Qualifications,
+            teacher.ExperienceYears,
+            teacher.TeachingSkills,
+            teacher.VerificationState,
+            teacher.IsActive
+        }, "Fetched profile."));
+    }
 
-    [HttpGet("{teacherId}/availability")]
-    public IActionResult GetAvailability(string teacherId) => StatusCode(501);
+    [HttpPatch("me/profile")]
+    public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateTeacherProfileRequest request, CancellationToken cancellationToken)
+    {
+        var userIdStr = HttpContext.User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(userIdStr, out var userId))
+            return Unauthorized();
 
-    [HttpPut("{teacherId}/availability")]
-    public IActionResult SetAvailability(string teacherId) => StatusCode(501);
+        var teacher = await _context.TeacherProfiles
+            .FirstOrDefaultAsync(t => t.UserId == userId, cancellationToken);
+            
+        if (teacher == null) return NotFound("Teacher profile not found.");
 
-    [HttpGet("/api/v1/me/teacher-profile")]
-    public IActionResult GetOwnProfile() => StatusCode(501);
+        teacher.UpdateProfile(
+            request.Bio ?? teacher.Bio,
+            request.Qualifications ?? teacher.Qualifications,
+            request.ExperienceYears ?? teacher.ExperienceYears,
+            request.TeachingSkills ?? teacher.TeachingSkills
+        );
 
-    [HttpPost("/api/v1/teacher-applications")]
-    public IActionResult CreateApplication() => StatusCode(501);
+        await _context.SaveChangesAsync(cancellationToken);
 
-    [HttpGet("/api/v1/teacher-applications/{applicationId}")]
-    public IActionResult GetApplicationStatus(string applicationId) => StatusCode(501);
-
-    [HttpPatch("/api/v1/teacher-applications/{applicationId}")]
-    public IActionResult EditApplication(string applicationId) => StatusCode(501);
-
-    [HttpPost("/api/v1/teacher-applications/{applicationId}/submit")]
-    public IActionResult SubmitApplication(string applicationId) => StatusCode(501);
-
-    [HttpPost("/api/v1/teacher-applications/{applicationId}/documents")]
-    public IActionResult CreateDocumentUpload(string applicationId) => StatusCode(501);
-
-    [HttpGet("/api/v1/teacher-applications/{applicationId}/documents")]
-    public IActionResult ListDocuments(string applicationId) => StatusCode(501);
-
-    [HttpDelete("/api/v1/teacher-applications/{applicationId}/documents/{documentId}")]
-    public IActionResult RemoveDocument(string applicationId, string documentId) => StatusCode(501);
+        return Ok(ApiResponse.Ok("Teacher profile updated successfully."));
+    }
 }
+
+public record RegisterTeacherRequest(
+    string Email,
+    string Password,
+    string FirstName,
+    string LastName
+);
+
+public record UpdateTeacherProfileRequest(
+    string? Bio,
+    string? Qualifications,
+    int? ExperienceYears,
+    string? TeachingSkills
+);

@@ -33,7 +33,11 @@ public class AuthController : ControllerBase
 
         SetRefreshTokenCookie(response.RefreshToken);
 
-        return Ok(ApiResponse<AuthResponse>.Ok(new AuthResponse { AccessToken = response.AccessToken }, "Login successful."));
+        return Ok(ApiResponse<AuthResponse>.Ok(new AuthResponse 
+        { 
+            AccessToken = response.AccessToken, 
+            MustChangePassword = response.MustChangePassword 
+        }, "Login successful."));
     }
 
     [HttpPost("refresh")]
@@ -52,7 +56,11 @@ public class AuthController : ControllerBase
 
         SetRefreshTokenCookie(response.RefreshToken);
 
-        return Ok(ApiResponse<AuthResponse>.Ok(new AuthResponse { AccessToken = response.AccessToken }, "Token refreshed."));
+        return Ok(ApiResponse<AuthResponse>.Ok(new AuthResponse 
+        { 
+            AccessToken = response.AccessToken, 
+            MustChangePassword = response.MustChangePassword 
+        }, "Token refreshed."));
     }
     
     [HttpPost("logout")]
@@ -93,7 +101,11 @@ public class AuthController : ControllerBase
     public IActionResult ResetPassword() => StatusCode(501);
 
     [HttpPost("change-password")]
-    public IActionResult ChangePassword() => StatusCode(501);
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, CancellationToken cancellationToken)
+    {
+        await _authService.ChangePasswordAsync(request, cancellationToken);
+        return Ok(ApiResponse.Ok("Password changed successfully."));
+    }
 
     [HttpGet("me")]
     public IActionResult Me() => StatusCode(501);
