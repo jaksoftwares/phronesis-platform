@@ -91,3 +91,42 @@ public class ContentReviewConfiguration : IEntityTypeConfiguration<ContentReview
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
+
+public class ContentAttachmentConfiguration : IEntityTypeConfiguration<ContentAttachment>
+{
+    public void Configure(EntityTypeBuilder<ContentAttachment> builder)
+    {
+        builder.ToTable("ContentAttachments");
+        builder.HasKey(ca => ca.Id);
+
+        builder.Property(ca => ca.FileName).IsRequired().HasMaxLength(255);
+        builder.Property(ca => ca.FileUri).IsRequired().HasMaxLength(1000);
+        builder.Property(ca => ca.MimeType).IsRequired().HasMaxLength(100);
+
+        builder.HasOne(ca => ca.EducationalContent)
+            .WithMany(ec => ec.Attachments)
+            .HasForeignKey(ca => ca.EducationalContentId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class SavedContentConfiguration : IEntityTypeConfiguration<SavedContent>
+{
+    public void Configure(EntityTypeBuilder<SavedContent> builder)
+    {
+        builder.ToTable("SavedContents");
+        builder.HasKey(sc => sc.Id);
+
+        builder.HasIndex(sc => new { sc.UserId, sc.EducationalContentId }).IsUnique();
+
+        builder.HasOne(sc => sc.User)
+            .WithMany()
+            .HasForeignKey(sc => sc.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(sc => sc.EducationalContent)
+            .WithMany()
+            .HasForeignKey(sc => sc.EducationalContentId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}

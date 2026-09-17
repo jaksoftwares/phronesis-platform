@@ -34,6 +34,8 @@ public interface IApplicationDbContext
     DbSet<Phronesis.Domain.Content.EducationalContent> EducationalContents { get; }
     DbSet<Phronesis.Domain.Content.ContentTag> ContentTags { get; }
     DbSet<Phronesis.Domain.Content.ContentReview> ContentReviews { get; }
+    DbSet<Phronesis.Domain.Content.ContentAttachment> ContentAttachments { get; }
+    DbSet<Phronesis.Domain.Content.SavedContent> SavedContents { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

@@ -37,6 +37,9 @@ public class EducationalContent : BaseEntity
     private readonly List<ContentReview> _reviews = new();
     public IReadOnlyCollection<ContentReview> Reviews => _reviews.AsReadOnly();
 
+    private readonly List<ContentAttachment> _attachments = new();
+    public IReadOnlyCollection<ContentAttachment> Attachments => _attachments.AsReadOnly();
+
     private EducationalContent() { }
 
     public EducationalContent(
@@ -120,6 +123,28 @@ public class EducationalContent : BaseEntity
         if (tag != null)
         {
             _tags.Remove(tag);
+        }
+    }
+
+    public ContentAttachment AddAttachment(string fileName, string fileUri, string mimeType, long sizeInBytes, bool isPrimary)
+    {
+        if (Status != ContentStatus.Draft)
+            throw new InvalidOperationException("Attachments can only be modified while the content is in Draft status.");
+
+        var attachment = new ContentAttachment(Id, fileName, fileUri, mimeType, sizeInBytes, isPrimary);
+        _attachments.Add(attachment);
+        return attachment;
+    }
+
+    public void RemoveAttachment(Guid attachmentId)
+    {
+        if (Status != ContentStatus.Draft)
+            throw new InvalidOperationException("Attachments can only be modified while the content is in Draft status.");
+
+        var attachment = _attachments.FirstOrDefault(a => a.Id == attachmentId);
+        if (attachment != null)
+        {
+            _attachments.Remove(attachment);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Phronesis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Phronesis.Infrastructure.Persistence;
 namespace Phronesis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhronesisDbContext))]
-    partial class PhronesisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260917143125_AddContentAttachmentSchema")]
+    partial class AddContentAttachmentSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -585,40 +588,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.HasIndex("SubjectId");
 
                     b.ToTable("EducationalContents", (string)null);
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Content.SavedContent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("EducationalContentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EducationalContentId");
-
-                    b.HasIndex("UserId", "EducationalContentId")
-                        .IsUnique();
-
-                    b.ToTable("SavedContents", (string)null);
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Identity.Permission", b =>
@@ -1365,25 +1334,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.Navigation("SubStrand");
 
                     b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Content.SavedContent", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Content.EducationalContent", "EducationalContent")
-                        .WithMany()
-                        .HasForeignKey("EducationalContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Phronesis.Domain.Identity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EducationalContent");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Identity.RolePermission", b =>

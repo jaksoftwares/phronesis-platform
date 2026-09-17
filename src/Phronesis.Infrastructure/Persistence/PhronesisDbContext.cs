@@ -41,6 +41,8 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<Phronesis.Domain.Content.EducationalContent> EducationalContents => Set<Phronesis.Domain.Content.EducationalContent>();
     public DbSet<Phronesis.Domain.Content.ContentTag> ContentTags => Set<Phronesis.Domain.Content.ContentTag>();
     public DbSet<Phronesis.Domain.Content.ContentReview> ContentReviews => Set<Phronesis.Domain.Content.ContentReview>();
+    public DbSet<Phronesis.Domain.Content.ContentAttachment> ContentAttachments => Set<Phronesis.Domain.Content.ContentAttachment>();
+    public DbSet<Phronesis.Domain.Content.SavedContent> SavedContents => Set<Phronesis.Domain.Content.SavedContent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

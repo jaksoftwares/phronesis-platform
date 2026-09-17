@@ -1,0 +1,21 @@
+# Walkthrough: M13 (Media, Documents & Secure Content Delivery)
+
+We have successfully engineered **M13**, allowing our educational platform to handle actual learning materials (videos, PDFs, interactives) efficiently and securely!
+
+## 1. Separation of Concerns
+To keep the SQL database highly performant, we did not store binary files in the database. 
+- We created a `ContentAttachment` entity that acts as a metadata pointer.
+- It tracks the `FileName`, the precise `FileUri`, the `MimeType`, the `SizeInBytes` (useful for calculating bandwidth later), and a boolean flag indicating if it is the `IsPrimary` attachment for that content block.
+
+## 2. Strict Data Integrity and Lockdowns
+- **State Locking:** We added domain-level safeguards within `EducationalContent.AddAttachment()` and `RemoveAttachment()`. Attachments can **only** be modified while the content is in the `Draft` state. Once content moves to `InReview` or `Published` (from M12), the media is firmly locked. Reviewers will always evaluate the exact files that the author submitted, with no possibility of stealth edits.
+- **Cascade Deletions:** If a piece of content is deleted, Entity Framework will automatically cascade and wipe out the associated attachment records from the database.
+
+## 3. The Attachment Engine API
+We built the `ContentAttachmentController` to handle the heavy lifting:
+- **`POST /api/v1/content/{id}/attachments`**: Securely accepts an `IFormFile` upload. It verifies the author's identity (via JWT `sub`), writes the physical file to the local `wwwroot/uploads` directory (ready to be swapped to Azure Blob Storage in Phase 7), and creates the metadata record in the database. If the database insertion fails, it automatically cleans up the orphaned physical file.
+- **`DELETE /api/v1/content/{id}/attachments/{attachmentId}`**: Removes the metadata and makes a best-effort attempt to delete the physical file from the disk to preserve storage capacity.
+
+The entire content creation pipeline is now unified! Authors can create content metadata (M11), attach physical files (M13), and submit them through the review and publishing workflow (M12).
+
+Next up is the final piece of Phase 4: **M14 (Content Search, Discovery & Catalog)**, where we will build the endpoints allowing learners to actually find this content!

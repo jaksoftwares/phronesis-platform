@@ -1,0 +1,29 @@
+# Walkthrough: M14 (Content Search, Discovery & Catalog)
+
+We have successfully engineered **M14**, completing Phase 4 (Content) of the Phronesis platform! We now have a robust consumption layer ready for our learners.
+
+## 1. The Bookmarking System
+To make the catalog more engaging for learners, we introduced a `SavedContent` domain entity. 
+- It acts as a mapping table between a `User` (the Learner) and `EducationalContent`.
+- We applied a unique composite database index on `[UserId, EducationalContentId]` to ensure a learner cannot accidentally bookmark the same piece of content twice.
+
+## 2. The Catalog Engine API
+We built the `CatalogController` to serve as the primary gateway for discovering learning materials:
+- **`GET /api/v1/catalog`**: A highly flexible search endpoint that supports pagination and complex taxonomy filtering (Grade, Subject, Strand). It performs full-text `LIKE` searches across the Title, Description, and Tags. 
+- **`GET /api/v1/catalog/{id}`**: Fetches the complete payload for a specific learning resource, including its primary media attachments.
+- **`POST /api/v1/catalog/{id}/save` & `DELETE`**: Allows learners to easily toggle content into their personal saved library.
+- **`GET /api/v1/catalog/saved`**: Fetches the user's specific saved library.
+
+## 3. Strict State Enforcement
+As architected in the plan, the Catalog API has a hardcoded filter applied at the query root: `.Where(c => c.Status == ContentStatus.Published)`.
+- It is physically impossible for a learner to discover or view a `Draft`, `InReview`, or `Archived` piece of content. 
+- This guarantees that our strict governance policies (established in M12) are fully respected in the public-facing platform.
+
+### Phase 4 is Complete! 🎉
+We have built:
+1. **M11:** The Core Content Aggregate (Drafting and Taxonomy Mapping)
+2. **M12:** The Content Review & Governance Engine (Strict state transitions)
+3. **M13:** The Media Attachment System
+4. **M14:** The Discoverable Catalog & Bookmarking Library
+
+Whenever you're ready, we can move on to **Phase 5 (Learning)**!
