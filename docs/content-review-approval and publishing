@@ -1,0 +1,23 @@
+# Walkthrough: M12 (Content Review, Approval & Publishing)
+
+We have successfully engineered **M12**, establishing a robust governance and quality assurance layer over our educational content!
+
+## 1. Controlled State Transitions
+We updated the `EducationalContent` aggregate root to strictly control how content moves through its lifecycle. Instead of allowing arbitrary status updates, we introduced specific domain methods:
+- `SubmitForReview()`: Safely transitions `Draft` to `InReview`.
+- `AddReview()`: Enforces the core logic—if a review is `Approved`, the content automatically transitions to `Published`. If `NeedsRevision`, it drops back to `Draft` so the author can make changes.
+- `Archive()`: Safely removes outdated content from active circulation.
+
+## 2. The Audit Trail (`ContentReview`)
+To satisfy compliance and quality tracking, we introduced the `ContentReview` entity.
+- It permanently records every review action against a piece of content.
+- It tracks the `ReviewerId`, the specific `Outcome` (`Approved`, `Rejected`, `NeedsRevision`), and the detailed `Feedback` provided to the author.
+- **Database Safety:** We configured EF Core with `DeleteBehavior.Cascade` on this relationship. If an admin completely wipes a piece of content from the database, its review history cleans up automatically. However, the `ReviewerId` is protected by `Restrict`—you cannot delete a user if they are tied to a historical review.
+
+## 3. API Governance (`ContentReviewController`)
+The new controller enforces all our business rules:
+- **`POST /api/v1/content/{id}/submit-for-review`**: Validates that only the original author can submit their draft.
+- **`POST /api/v1/content/{id}/reviews`**: Validates that authors **cannot** review their own content, enforcing separation of duties. Submitting an approved review here automatically publishes the content.
+- **`GET /api/v1/content/pending-reviews`**: Exposes a quick query for administrators to find content waiting in the queue.
+
+The review engine is fully operational. We are now ready to tackle **M13 (Media, Documents & Secure Content Delivery)**, where we will handle the actual file attachments (videos, PDFs) for the content!

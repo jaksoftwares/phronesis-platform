@@ -38,6 +38,10 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<Phronesis.Domain.Academic.SubStrandPrerequisite> SubStrandPrerequisites => Set<Phronesis.Domain.Academic.SubStrandPrerequisite>();
     public DbSet<Phronesis.Domain.Users.TeacherCompetence> TeacherCompetences => Set<Phronesis.Domain.Users.TeacherCompetence>();
 
+    public DbSet<Phronesis.Domain.Content.EducationalContent> EducationalContents => Set<Phronesis.Domain.Content.EducationalContent>();
+    public DbSet<Phronesis.Domain.Content.ContentTag> ContentTags => Set<Phronesis.Domain.Content.ContentTag>();
+    public DbSet<Phronesis.Domain.Content.ContentReview> ContentReviews => Set<Phronesis.Domain.Content.ContentReview>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

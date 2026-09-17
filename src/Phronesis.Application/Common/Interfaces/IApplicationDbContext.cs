@@ -31,5 +31,9 @@ public interface IApplicationDbContext
     DbSet<Phronesis.Domain.Academic.SubStrandPrerequisite> SubStrandPrerequisites { get; }
     DbSet<Phronesis.Domain.Users.TeacherCompetence> TeacherCompetences { get; }
 
+    DbSet<Phronesis.Domain.Content.EducationalContent> EducationalContents { get; }
+    DbSet<Phronesis.Domain.Content.ContentTag> ContentTags { get; }
+    DbSet<Phronesis.Domain.Content.ContentReview> ContentReviews { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

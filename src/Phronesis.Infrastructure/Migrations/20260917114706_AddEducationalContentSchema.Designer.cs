@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Phronesis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Phronesis.Infrastructure.Persistence;
 namespace Phronesis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhronesisDbContext))]
-    partial class PhronesisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260917114706_AddEducationalContentSchema")]
+    partial class AddEducationalContentSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -381,48 +384,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Subjects", (string)null);
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Content.ContentReview", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("EducationalContentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Feedback")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("Outcome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ReviewerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EducationalContentId");
-
-                    b.HasIndex("ReviewerId");
-
-                    b.ToTable("ContentReviews", (string)null);
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Content.ContentTag", b =>
@@ -1195,25 +1156,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.Navigation("SubStrand");
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Content.ContentReview", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Content.EducationalContent", "EducationalContent")
-                        .WithMany("Reviews")
-                        .HasForeignKey("EducationalContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Phronesis.Domain.Identity.User", "Reviewer")
-                        .WithMany()
-                        .HasForeignKey("ReviewerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("EducationalContent");
-
-                    b.Navigation("Reviewer");
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Content.ContentTag", b =>
                 {
                     b.HasOne("Phronesis.Domain.Content.EducationalContent", "EducationalContent")
@@ -1444,8 +1386,6 @@ namespace Phronesis.Infrastructure.Migrations
 
             modelBuilder.Entity("Phronesis.Domain.Content.EducationalContent", b =>
                 {
-                    b.Navigation("Reviews");
-
                     b.Navigation("Tags");
                 });
 
