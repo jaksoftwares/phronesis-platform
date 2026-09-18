@@ -109,10 +109,6 @@ public class CommerceController : ControllerBase
 public class MockProvisionRequest
 {
     public string PlanCode { get; set; } = string.Empty;
-in/finance/reconciliation/run")]
-    public IActionResult RunReconciliation() => StatusCode(501);
-in/finance/reconciliation/run")]
-    public IActionResult RunReconciliation() => StatusCode(501);
 }
 
 

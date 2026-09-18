@@ -21,10 +21,21 @@ public class ClassSession : BaseEntity
     
     public SessionStatus Status { get; private set; }
     
-    // Will be populated in M23
-    public string? MeetingLink { get; private set; }
+    // Video Integration
+    public string? MeetingId { get; private set; }
+    public string? MeetingPassword { get; private set; }
+    public string? MeetingLink { get; private set; } // The Join URL for Learners
+    public string? HostUrl { get; private set; } // The Host URL for Teachers
+
+    // Post-Class Artifacts
+    public string? RecordingUrl { get; private set; }
+    public string? TeacherNotes { get; private set; }
 
     public VirtualClass VirtualClass { get; private set; } = null!;
+
+    // Navigation Properties
+    public ICollection<ClassAttendance> Attendances { get; private set; } = new List<ClassAttendance>();
+    public ICollection<SessionFeedback> Feedbacks { get; private set; } = new List<SessionFeedback>();
 
     private ClassSession() { } // EF Core
 
@@ -40,15 +51,24 @@ public class ClassSession : BaseEntity
         Status = SessionStatus.Scheduled;
     }
 
-    public void StartSession(string meetingLink)
+    public void AttachVideoMeeting(string meetingId, string meetingPassword, string joinUrl, string hostUrl)
     {
-        Status = SessionStatus.InProgress;
-        MeetingLink = meetingLink;
+        MeetingId = meetingId;
+        MeetingPassword = meetingPassword;
+        MeetingLink = joinUrl;
+        HostUrl = hostUrl;
     }
 
-    public void CompleteSession()
+    public void StartSession()
+    {
+        Status = SessionStatus.InProgress;
+    }
+
+    public void CompleteSession(string? recordingUrl, string? teacherNotes)
     {
         Status = SessionStatus.Completed;
+        RecordingUrl = recordingUrl;
+        TeacherNotes = teacherNotes;
     }
 
     public void CancelSession()

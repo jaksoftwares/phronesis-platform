@@ -57,11 +57,88 @@ public class ClassSessionConfiguration : IEntityTypeConfiguration<ClassSession>
         builder.HasKey(cs => cs.Id);
 
         builder.Property(cs => cs.Title).IsRequired().HasMaxLength(200);
-        builder.Property(cs => cs.MeetingLink).HasMaxLength(500);
+        builder.Property(cs => cs.MeetingId).HasMaxLength(100);
+        builder.Property(cs => cs.MeetingPassword).HasMaxLength(100);
+        builder.Property(cs => cs.MeetingLink).HasMaxLength(1000);
+        builder.Property(cs => cs.HostUrl).HasMaxLength(1000);
+        builder.Property(cs => cs.RecordingUrl).HasMaxLength(1000);
+        builder.Property(cs => cs.TeacherNotes).HasMaxLength(4000);
 
         builder.HasOne(cs => cs.VirtualClass)
             .WithMany(vc => vc.Sessions)
             .HasForeignKey(cs => cs.VirtualClassId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class TeacherAvailabilityConfiguration : IEntityTypeConfiguration<TeacherAvailability>
+{
+    public void Configure(EntityTypeBuilder<TeacherAvailability> builder)
+    {
+        builder.ToTable("TeacherAvailabilities");
+        builder.HasKey(ta => ta.Id);
+
+        builder.HasOne(ta => ta.Teacher)
+            .WithMany()
+            .HasForeignKey(ta => ta.TeacherId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class BookingRequestConfiguration : IEntityTypeConfiguration<BookingRequest>
+{
+    public void Configure(EntityTypeBuilder<BookingRequest> builder)
+    {
+        builder.ToTable("BookingRequests");
+        builder.HasKey(br => br.Id);
+
+        builder.Property(br => br.TeacherNotes).HasMaxLength(1000);
+
+        builder.HasOne(br => br.Learner)
+            .WithMany()
+            .HasForeignKey(br => br.LearnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(br => br.Teacher)
+            .WithMany()
+            .HasForeignKey(br => br.TeacherId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(br => br.Subject)
+            .WithMany()
+            .HasForeignKey(br => br.SubjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
+
+public class ClassAttendanceConfiguration : IEntityTypeConfiguration<ClassAttendance>
+{
+    public void Configure(EntityTypeBuilder<ClassAttendance> builder)
+    {
+        builder.ToTable("ClassAttendances");
+        builder.HasKey(ca => ca.Id);
+
+        builder.HasOne(ca => ca.ClassSession)
+            .WithMany(cs => cs.Attendances)
+            .HasForeignKey(ca => ca.ClassSessionId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class SessionFeedbackConfiguration : IEntityTypeConfiguration<SessionFeedback>
+{
+    public void Configure(EntityTypeBuilder<SessionFeedback> builder)
+    {
+        builder.ToTable("SessionFeedbacks");
+        builder.HasKey(sf => sf.Id);
+
+        builder.Property(sf => sf.WhatWentWell).HasMaxLength(1000);
+        builder.Property(sf => sf.AreasForImprovement).HasMaxLength(1000);
+        builder.Property(sf => sf.Complaints).HasMaxLength(1000);
+
+        builder.HasOne(sf => sf.ClassSession)
+            .WithMany(cs => cs.Feedbacks)
+            .HasForeignKey(sf => sf.ClassSessionId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

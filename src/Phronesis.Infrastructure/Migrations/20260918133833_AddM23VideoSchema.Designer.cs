@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Phronesis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Phronesis.Infrastructure.Persistence;
 namespace Phronesis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhronesisDbContext))]
-    partial class PhronesisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260918133833_AddM23VideoSchema")]
+    partial class AddM23VideoSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1640,37 +1643,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.ToTable("BookingRequests", (string)null);
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Tuition.ClassAttendance", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClassSessionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("FirstJoinedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastJoinedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("LearnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalDurationMinutes")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassSessionId");
-
-                    b.ToTable("ClassAttendances", (string)null);
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Tuition.ClassEnrollment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1739,19 +1711,11 @@ namespace Phronesis.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("RecordingUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<string>("TeacherNotes")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -1772,49 +1736,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.HasIndex("VirtualClassId");
 
                     b.ToTable("ClassSessions", (string)null);
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Tuition.SessionFeedback", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AreasForImprovement")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<Guid>("ClassSessionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Complaints")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("ContentRating")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("LearnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("SubmittedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TeacherRating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TechnicalQualityRating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("WhatWentWell")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassSessionId");
-
-                    b.ToTable("SessionFeedbacks", (string)null);
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Tuition.TeacherAvailability", b =>
@@ -2744,17 +2665,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Tuition.ClassAttendance", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Tuition.ClassSession", "ClassSession")
-                        .WithMany("Attendances")
-                        .HasForeignKey("ClassSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ClassSession");
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Tuition.ClassEnrollment", b =>
                 {
                     b.HasOne("Phronesis.Domain.Identity.User", "Learner")
@@ -2783,17 +2693,6 @@ namespace Phronesis.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("VirtualClass");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Tuition.SessionFeedback", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Tuition.ClassSession", "ClassSession")
-                        .WithMany("Feedbacks")
-                        .HasForeignKey("ClassSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ClassSession");
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Tuition.TeacherAvailability", b =>
@@ -2976,13 +2875,6 @@ namespace Phronesis.Infrastructure.Migrations
             modelBuilder.Entity("Phronesis.Domain.Learning.Question", b =>
                 {
                     b.Navigation("Options");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Tuition.ClassSession", b =>
-                {
-                    b.Navigation("Attendances");
-
-                    b.Navigation("Feedbacks");
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Tuition.VirtualClass", b =>

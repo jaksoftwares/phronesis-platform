@@ -26,6 +26,8 @@ builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IPaymentProvi
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IPaymentService, Phronesis.Infrastructure.Services.Payments.PaymentService>();
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IOrderService, Phronesis.Infrastructure.Services.Commerce.OrderService>();
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.ITuitionService, Phronesis.Infrastructure.Services.Tuition.TuitionService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IBookingService, Phronesis.Infrastructure.Services.Tuition.BookingService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IVideoMeetingProvider, Phronesis.Infrastructure.Services.Video.MockVideoProvider>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

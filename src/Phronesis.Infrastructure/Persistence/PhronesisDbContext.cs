@@ -18,6 +18,7 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<UserSession> UserSessions => Set<UserSession>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+
     public DbSet<Phronesis.Domain.Organization.StaffProfile> StaffProfiles => Set<Phronesis.Domain.Organization.StaffProfile>();
     public DbSet<Phronesis.Domain.Academic.GradeLevel> GradeLevels => Set<Phronesis.Domain.Academic.GradeLevel>();
     public DbSet<Phronesis.Domain.Users.LearnerProfile> LearnerProfiles => Set<Phronesis.Domain.Users.LearnerProfile>();
@@ -66,6 +67,10 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<Phronesis.Domain.Tuition.VirtualClass> VirtualClasses => Set<Phronesis.Domain.Tuition.VirtualClass>();
     public DbSet<Phronesis.Domain.Tuition.ClassEnrollment> ClassEnrollments => Set<Phronesis.Domain.Tuition.ClassEnrollment>();
     public DbSet<Phronesis.Domain.Tuition.ClassSession> ClassSessions => Set<Phronesis.Domain.Tuition.ClassSession>();
+    public DbSet<Phronesis.Domain.Tuition.ClassAttendance> ClassAttendances => Set<Phronesis.Domain.Tuition.ClassAttendance>();
+    public DbSet<Phronesis.Domain.Tuition.SessionFeedback> SessionFeedbacks => Set<Phronesis.Domain.Tuition.SessionFeedback>();
+    public DbSet<Phronesis.Domain.Tuition.TeacherAvailability> TeacherAvailabilities => Set<Phronesis.Domain.Tuition.TeacherAvailability>();
+    public DbSet<Phronesis.Domain.Tuition.BookingRequest> BookingRequests => Set<Phronesis.Domain.Tuition.BookingRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

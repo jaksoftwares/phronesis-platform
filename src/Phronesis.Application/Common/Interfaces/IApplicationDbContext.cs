@@ -59,6 +59,10 @@ public interface IApplicationDbContext
     DbSet<Phronesis.Domain.Tuition.VirtualClass> VirtualClasses { get; }
     DbSet<Phronesis.Domain.Tuition.ClassEnrollment> ClassEnrollments { get; }
     DbSet<Phronesis.Domain.Tuition.ClassSession> ClassSessions { get; }
+    DbSet<Phronesis.Domain.Tuition.ClassAttendance> ClassAttendances { get; }
+    DbSet<Phronesis.Domain.Tuition.SessionFeedback> SessionFeedbacks { get; }
+    DbSet<Phronesis.Domain.Tuition.TeacherAvailability> TeacherAvailabilities { get; }
+    DbSet<Phronesis.Domain.Tuition.BookingRequest> BookingRequests { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
