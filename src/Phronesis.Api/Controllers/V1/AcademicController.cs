@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Phronesis.Application.Common.Interfaces;
+using Phronesis.Shared.Responses;
 
 namespace Phronesis.Api.Controllers.V1;
 
@@ -6,6 +9,31 @@ namespace Phronesis.Api.Controllers.V1;
 [Route("api/v1/academic")]
 public class AcademicController : ControllerBase
 {
+    private readonly IApplicationDbContext _context;
+
+    public AcademicController(IApplicationDbContext context)
+    {
+        _context = context;
+    }
+
+    [HttpGet("grades")]
+    public async Task<IActionResult> ListAllGrades(CancellationToken cancellationToken)
+    {
+        var grades = await _context.GradeLevels
+            .AsNoTracking()
+            .OrderBy(g => g.SortOrder)
+            .Select(g => new 
+            {
+                g.Id,
+                g.Name,
+                g.Description,
+                g.SortOrder
+            })
+            .ToListAsync(cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(grades, "Fetched all active grades."));
+    }
+
     [HttpGet("/api/v1/curricula")]
     public IActionResult ListCurricula() => StatusCode(501);
 

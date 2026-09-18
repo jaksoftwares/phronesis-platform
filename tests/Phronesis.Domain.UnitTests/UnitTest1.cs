@@ -1,4 +1,4 @@
-﻿namespace Phronesis.Api.IntegrationTests;
+﻿namespace Phronesis.Domain.UnitTests;
 
 public class UnitTest1
 {

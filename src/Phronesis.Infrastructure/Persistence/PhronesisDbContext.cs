@@ -8,8 +8,13 @@ namespace Phronesis.Infrastructure.Persistence;
 
 public class PhronesisDbContext : DbContext, IApplicationDbContext
 {
-    public PhronesisDbContext(DbContextOptions<PhronesisDbContext> options) : base(options)
+    private readonly ICurrentUserService? _currentUserService;
+
+    public PhronesisDbContext(
+        DbContextOptions<PhronesisDbContext> options, 
+        ICurrentUserService? currentUserService = null) : base(options)
     {
+        _currentUserService = currentUserService;
     }
 
     public DbSet<User> Users => Set<User>();
@@ -72,14 +77,34 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<Phronesis.Domain.Tuition.TeacherAvailability> TeacherAvailabilities => Set<Phronesis.Domain.Tuition.TeacherAvailability>();
     public DbSet<Phronesis.Domain.Tuition.BookingRequest> BookingRequests => Set<Phronesis.Domain.Tuition.BookingRequest>();
 
+    public DbSet<Phronesis.Domain.Collaboration.ClassResource> ClassResources => Set<Phronesis.Domain.Collaboration.ClassResource>();
+    public DbSet<Phronesis.Domain.Collaboration.ClassDiscussion> ClassDiscussions => Set<Phronesis.Domain.Collaboration.ClassDiscussion>();
+    public DbSet<Phronesis.Domain.Collaboration.DiscussionReply> DiscussionReplies => Set<Phronesis.Domain.Collaboration.DiscussionReply>();
+
+    public DbSet<Phronesis.Domain.Communication.Notification> Notifications => Set<Phronesis.Domain.Communication.Notification>();
+    public DbSet<Phronesis.Domain.Communication.NotificationPreference> NotificationPreferences => Set<Phronesis.Domain.Communication.NotificationPreference>();
+
+    public DbSet<Phronesis.Domain.Support.SupportTicket> SupportTickets => Set<Phronesis.Domain.Support.SupportTicket>();
+    public DbSet<Phronesis.Domain.Support.TicketMessage> TicketMessages => Set<Phronesis.Domain.Support.TicketMessage>();
+
+    public DbSet<Phronesis.Domain.Operations.SystemSetting> SystemSettings => Set<Phronesis.Domain.Operations.SystemSetting>();
+    public DbSet<Phronesis.Domain.Operations.FeatureFlag> FeatureFlags => Set<Phronesis.Domain.Operations.FeatureFlag>();
+
+    public DbSet<Phronesis.Domain.Operations.Audit.AuditLog> AuditLogs => Set<Phronesis.Domain.Operations.Audit.AuditLog>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        var userId = _currentUserService?.UserId;
+        var ipAddress = _currentUserService?.IpAddress;
+
+        var auditEntries = new List<Phronesis.Domain.Operations.Audit.AuditLog>();
+
         foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
             switch (entry.State)
@@ -92,6 +117,52 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
                     break;
             }
         }
-        return base.SaveChangesAsync(cancellationToken);
+
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.Entity is Phronesis.Domain.Operations.Audit.AuditLog || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
+                continue;
+
+            var entityName = entry.Entity.GetType().Name;
+            var action = entry.State.ToString();
+            
+            // Try to get EntityId (Id property usually exists on BaseEntity or directly)
+            var idProperty = entry.Properties.FirstOrDefault(p => p.Metadata.IsPrimaryKey());
+            var entityId = idProperty?.CurrentValue?.ToString() ?? "Unknown";
+
+            string? oldValues = null;
+            string? newValues = null;
+
+            if (entry.State == EntityState.Added)
+            {
+                newValues = System.Text.Json.JsonSerializer.Serialize(entry.CurrentValues.ToObject());
+            }
+            else if (entry.State == EntityState.Deleted)
+            {
+                oldValues = System.Text.Json.JsonSerializer.Serialize(entry.OriginalValues.ToObject());
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                oldValues = System.Text.Json.JsonSerializer.Serialize(entry.OriginalValues.ToObject());
+                newValues = System.Text.Json.JsonSerializer.Serialize(entry.CurrentValues.ToObject());
+            }
+
+            auditEntries.Add(new Phronesis.Domain.Operations.Audit.AuditLog(
+                userId: userId,
+                action: action,
+                entityName: entityName,
+                entityId: entityId,
+                oldValues: oldValues,
+                newValues: newValues,
+                ipAddress: ipAddress
+            ));
+        }
+
+        if (auditEntries.Any())
+        {
+            await AuditLogs.AddRangeAsync(auditEntries, cancellationToken);
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
     }
 }

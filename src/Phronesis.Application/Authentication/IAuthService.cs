@@ -9,4 +9,17 @@ public interface IAuthService
     Task<AuthResponse> RefreshTokenAsync(string refreshToken, string? deviceInfo, string? ipAddress, CancellationToken cancellationToken = default);
     Task RevokeTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
     Task ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken = default);
+
+    Task RequestPasswordResetAsync(RequestPasswordResetRequest request, CancellationToken cancellationToken = default);
+    Task ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default);
+
+    Task VerifyEmailAsync(VerifyEmailRequest request, CancellationToken cancellationToken = default);
+    Task ResendEmailVerificationAsync(ResendEmailVerificationRequest request, CancellationToken cancellationToken = default);
+
+    // Two-Factor Authentication
+    Task<string> GenerateTwoFactorSecretAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<bool> VerifyTwoFactorAsync(Guid userId, string code, CancellationToken cancellationToken = default);
+    Task<bool> ValidateTwoFactorCodeAsync(Guid userId, string code, CancellationToken cancellationToken = default);
+
+    Task<object?> GetMeAsync(string email, CancellationToken cancellationToken = default);
 }

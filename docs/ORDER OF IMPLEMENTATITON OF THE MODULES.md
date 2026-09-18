@@ -68,16 +68,6 @@ Here is the counterchecked, module-by-module implementation order for our end-to
 - **M32:** Quality Assurance & Automated Testing (Cross-cutting)
 - **M33:** Observability, Monitoring & Reliability (Cross-cutting)
 
-## 📱 Phase 10 – Mobile
-*Mobile/PWA reach.*
-- **M34:** Mobile / PWA Experience
-
-## 🚀 Phase 11 – Advanced
-*Personalization and global expansion.*
-- **M35:** Advanced Personalization & Recommendation
-- **M36:** Internationalization & Global Expansion
-
----
 
 ### Minimum Viable Product (MVP) Boundary
 The first production release should focus on proving the core value chain. It will primarily cover **Phases 0 through 7**, plus essential notifications (M26) and minimum operations (M28-M33).

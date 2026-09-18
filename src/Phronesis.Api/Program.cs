@@ -15,10 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddHttpContextAccessor(); // Needed for ICurrentUserService
+builder.Services.AddMemoryCache(); // Required for IConfigurationService and IReportingService
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.ICurrentUserService, Phronesis.Api.Services.CurrentUserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<Phronesis.Application.Authorization.IPermissionService, Phronesis.Application.Authorization.PermissionService>();
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.ISubscriptionService, Phronesis.Infrastructure.Services.SubscriptionService>();
@@ -28,6 +31,15 @@ builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IOrderService
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.ITuitionService, Phronesis.Infrastructure.Services.Tuition.TuitionService>();
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IBookingService, Phronesis.Infrastructure.Services.Tuition.BookingService>();
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IVideoMeetingProvider, Phronesis.Infrastructure.Services.Video.MockVideoProvider>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.ICollaborationService, Phronesis.Infrastructure.Services.Collaboration.CollaborationService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.INotificationService, Phronesis.Infrastructure.Services.Communication.NotificationService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IHelpdeskService, Phronesis.Infrastructure.Services.Support.HelpdeskService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IConfigurationService, Phronesis.Infrastructure.Services.Operations.ConfigurationService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IReportingService, Phronesis.Infrastructure.Services.Operations.ReportingService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IAuditService, Phronesis.Infrastructure.Services.Operations.AuditService>();
+
+builder.Services.Configure<Phronesis.Infrastructure.Email.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<Phronesis.Application.Common.Interfaces.IEmailService, Phronesis.Infrastructure.Email.SmtpEmailService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -55,6 +67,22 @@ builder.Services.AddDbContext<PhronesisDbContext>(options =>
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IApplicationDbContext>(provider => 
     provider.GetRequiredService<PhronesisDbContext>());
 
+builder.Services.AddHttpLogging(logging =>
+{
+    logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "https://www.phronesis-homeschool.com")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -70,6 +98,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
+app.UseHttpLogging();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

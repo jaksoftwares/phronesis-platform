@@ -64,5 +64,20 @@ public interface IApplicationDbContext
     DbSet<Phronesis.Domain.Tuition.TeacherAvailability> TeacherAvailabilities { get; }
     DbSet<Phronesis.Domain.Tuition.BookingRequest> BookingRequests { get; }
 
+    DbSet<Phronesis.Domain.Collaboration.ClassResource> ClassResources { get; }
+    DbSet<Phronesis.Domain.Collaboration.ClassDiscussion> ClassDiscussions { get; }
+    DbSet<Phronesis.Domain.Collaboration.DiscussionReply> DiscussionReplies { get; }
+
+    DbSet<Phronesis.Domain.Communication.Notification> Notifications { get; }
+    DbSet<Phronesis.Domain.Communication.NotificationPreference> NotificationPreferences { get; }
+
+    DbSet<Phronesis.Domain.Support.SupportTicket> SupportTickets { get; }
+    DbSet<Phronesis.Domain.Support.TicketMessage> TicketMessages { get; }
+
+    DbSet<Phronesis.Domain.Operations.SystemSetting> SystemSettings { get; }
+    DbSet<Phronesis.Domain.Operations.FeatureFlag> FeatureFlags { get; }
+
+    DbSet<Phronesis.Domain.Operations.Audit.AuditLog> AuditLogs { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
