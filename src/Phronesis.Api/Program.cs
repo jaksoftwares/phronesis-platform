@@ -21,6 +21,11 @@ builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<Phronesis.Application.Authorization.IPermissionService, Phronesis.Application.Authorization.PermissionService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.ISubscriptionService, Phronesis.Infrastructure.Services.SubscriptionService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IPaymentProvider, Phronesis.Infrastructure.Services.Payments.MockPaymentProvider>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IPaymentService, Phronesis.Infrastructure.Services.Payments.PaymentService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IOrderService, Phronesis.Infrastructure.Services.Commerce.OrderService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.ITuitionService, Phronesis.Infrastructure.Services.Tuition.TuitionService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

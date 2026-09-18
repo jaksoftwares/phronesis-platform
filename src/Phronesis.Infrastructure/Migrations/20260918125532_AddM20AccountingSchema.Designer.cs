@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Phronesis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Phronesis.Infrastructure.Persistence;
 namespace Phronesis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhronesisDbContext))]
-    partial class PhronesisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260918125532_AddM20AccountingSchema")]
+    partial class AddM20AccountingSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1589,147 +1592,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.ToTable("StaffProfiles", (string)null);
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Tuition.ClassEnrollment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("LearnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("VirtualClassId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VirtualClassId");
-
-                    b.HasIndex("LearnerId", "VirtualClassId")
-                        .IsUnique();
-
-                    b.ToTable("ClassEnrollments", (string)null);
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Tuition.ClassSession", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MeetingLink")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("VirtualClassId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VirtualClassId");
-
-                    b.ToTable("ClassSessions", (string)null);
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Tuition.VirtualClass", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("ClassType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSubscriptionIncluded")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MaxCapacity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("SubjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("VirtualClasses", (string)null);
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Users.GuardianProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2529,55 +2391,6 @@ namespace Phronesis.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Phronesis.Domain.Tuition.ClassEnrollment", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Identity.User", "Learner")
-                        .WithMany()
-                        .HasForeignKey("LearnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Phronesis.Domain.Tuition.VirtualClass", "VirtualClass")
-                        .WithMany("Enrollments")
-                        .HasForeignKey("VirtualClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Learner");
-
-                    b.Navigation("VirtualClass");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Tuition.ClassSession", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Tuition.VirtualClass", "VirtualClass")
-                        .WithMany("Sessions")
-                        .HasForeignKey("VirtualClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("VirtualClass");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Tuition.VirtualClass", b =>
-                {
-                    b.HasOne("Phronesis.Domain.Academic.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Phronesis.Domain.Identity.User", "Teacher")
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Subject");
-
-                    b.Navigation("Teacher");
-                });
-
             modelBuilder.Entity("Phronesis.Domain.Users.GuardianProfile", b =>
                 {
                     b.HasOne("Phronesis.Domain.Identity.User", "User")
@@ -2728,13 +2541,6 @@ namespace Phronesis.Infrastructure.Migrations
             modelBuilder.Entity("Phronesis.Domain.Learning.Question", b =>
                 {
                     b.Navigation("Options");
-                });
-
-            modelBuilder.Entity("Phronesis.Domain.Tuition.VirtualClass", b =>
-                {
-                    b.Navigation("Enrollments");
-
-                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("Phronesis.Domain.Users.GuardianProfile", b =>

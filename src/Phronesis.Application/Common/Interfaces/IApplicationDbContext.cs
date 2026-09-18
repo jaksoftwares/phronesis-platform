@@ -37,5 +37,28 @@ public interface IApplicationDbContext
     DbSet<Phronesis.Domain.Content.ContentAttachment> ContentAttachments { get; }
     DbSet<Phronesis.Domain.Content.SavedContent> SavedContents { get; }
 
+    DbSet<Phronesis.Domain.Learning.LearnerEnrollment> LearnerEnrollments { get; }
+    DbSet<Phronesis.Domain.Learning.ContentEngagement> ContentEngagements { get; }
+
+    DbSet<Phronesis.Domain.Learning.Assessment> Assessments { get; }
+    DbSet<Phronesis.Domain.Learning.Question> Questions { get; }
+    DbSet<Phronesis.Domain.Learning.QuestionOption> QuestionOptions { get; }
+    DbSet<Phronesis.Domain.Learning.AssessmentAttempt> AssessmentAttempts { get; }
+    DbSet<Phronesis.Domain.Learning.AttemptAnswer> AttemptAnswers { get; }
+
+    DbSet<Phronesis.Domain.Learning.SubjectProgress> SubjectProgresses { get; }
+    DbSet<Phronesis.Domain.Learning.Certificate> Certificates { get; }
+
+    DbSet<Phronesis.Domain.Commerce.SubscriptionPlan> SubscriptionPlans { get; }
+    DbSet<Phronesis.Domain.Commerce.UserSubscription> UserSubscriptions { get; }
+    DbSet<Phronesis.Domain.Commerce.PaymentTransaction> PaymentTransactions { get; }
+    DbSet<Phronesis.Domain.Commerce.Order> Orders { get; }
+    DbSet<Phronesis.Domain.Commerce.Invoice> Invoices { get; }
+    DbSet<Phronesis.Domain.Commerce.RefundRequest> RefundRequests { get; }
+
+    DbSet<Phronesis.Domain.Tuition.VirtualClass> VirtualClasses { get; }
+    DbSet<Phronesis.Domain.Tuition.ClassEnrollment> ClassEnrollments { get; }
+    DbSet<Phronesis.Domain.Tuition.ClassSession> ClassSessions { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

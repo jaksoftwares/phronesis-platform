@@ -44,6 +44,29 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<Phronesis.Domain.Content.ContentAttachment> ContentAttachments => Set<Phronesis.Domain.Content.ContentAttachment>();
     public DbSet<Phronesis.Domain.Content.SavedContent> SavedContents => Set<Phronesis.Domain.Content.SavedContent>();
 
+    public DbSet<Phronesis.Domain.Learning.LearnerEnrollment> LearnerEnrollments => Set<Phronesis.Domain.Learning.LearnerEnrollment>();
+    public DbSet<Phronesis.Domain.Learning.ContentEngagement> ContentEngagements => Set<Phronesis.Domain.Learning.ContentEngagement>();
+
+    public DbSet<Phronesis.Domain.Learning.Assessment> Assessments => Set<Phronesis.Domain.Learning.Assessment>();
+    public DbSet<Phronesis.Domain.Learning.Question> Questions => Set<Phronesis.Domain.Learning.Question>();
+    public DbSet<Phronesis.Domain.Learning.QuestionOption> QuestionOptions => Set<Phronesis.Domain.Learning.QuestionOption>();
+    public DbSet<Phronesis.Domain.Learning.AssessmentAttempt> AssessmentAttempts => Set<Phronesis.Domain.Learning.AssessmentAttempt>();
+    public DbSet<Phronesis.Domain.Learning.AttemptAnswer> AttemptAnswers => Set<Phronesis.Domain.Learning.AttemptAnswer>();
+
+    public DbSet<Phronesis.Domain.Learning.SubjectProgress> SubjectProgresses => Set<Phronesis.Domain.Learning.SubjectProgress>();
+    public DbSet<Phronesis.Domain.Learning.Certificate> Certificates => Set<Phronesis.Domain.Learning.Certificate>();
+
+    public DbSet<Phronesis.Domain.Commerce.SubscriptionPlan> SubscriptionPlans => Set<Phronesis.Domain.Commerce.SubscriptionPlan>();
+    public DbSet<Phronesis.Domain.Commerce.UserSubscription> UserSubscriptions => Set<Phronesis.Domain.Commerce.UserSubscription>();
+    public DbSet<Phronesis.Domain.Commerce.PaymentTransaction> PaymentTransactions => Set<Phronesis.Domain.Commerce.PaymentTransaction>();
+    public DbSet<Phronesis.Domain.Commerce.Order> Orders => Set<Phronesis.Domain.Commerce.Order>();
+    public DbSet<Phronesis.Domain.Commerce.Invoice> Invoices => Set<Phronesis.Domain.Commerce.Invoice>();
+    public DbSet<Phronesis.Domain.Commerce.RefundRequest> RefundRequests => Set<Phronesis.Domain.Commerce.RefundRequest>();
+
+    public DbSet<Phronesis.Domain.Tuition.VirtualClass> VirtualClasses => Set<Phronesis.Domain.Tuition.VirtualClass>();
+    public DbSet<Phronesis.Domain.Tuition.ClassEnrollment> ClassEnrollments => Set<Phronesis.Domain.Tuition.ClassEnrollment>();
+    public DbSet<Phronesis.Domain.Tuition.ClassSession> ClassSessions => Set<Phronesis.Domain.Tuition.ClassSession>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
