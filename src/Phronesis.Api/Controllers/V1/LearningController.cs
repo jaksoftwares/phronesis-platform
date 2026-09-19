@@ -50,7 +50,11 @@ public class LearningController : ControllerBase
         var dashboardData = new 
         {
             User = new { user.FirstName, user.LastName },
-            Learner = new { learnerProfile.GradeLevelId, learnerProfile.SchoolName },
+            Learner = new { 
+                learnerProfile.GradeLevelId, 
+                learnerProfile.SchoolName,
+                learnerProfile.RegistrationNumber
+            },
             LearningStreak = recentEngagements.Any() ? 1 : 0, // Simplified streak logic
             ActiveEnrollmentsCount = activeEnrollments,
             TotalPoints = 120 // Placeholder for gamification
@@ -244,16 +248,57 @@ public class LearningController : ControllerBase
     public IActionResult AssessmentHistory() => StatusCode(501);
 
     [HttpGet("learners/{learnerId}/progress")]
-    public IActionResult LearnerProgress(string learnerId) => StatusCode(501);
+    public async Task<IActionResult> LearnerProgress(Guid learnerId, CancellationToken cancellationToken)
+    {
+        var guardianIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(guardianIdStr, out var guardianUserId)) return Unauthorized();
+
+        var guardian = await _context.GuardianProfiles.FirstOrDefaultAsync(g => g.UserId == guardianUserId, cancellationToken);
+        if (guardian == null) return NotFound("Guardian profile not found.");
+
+        var isLinked = await _context.LearnerGuardians.AnyAsync(lg => lg.LearnerProfileId == learnerId && lg.GuardianProfileId == guardian.Id && lg.CanViewProgress, cancellationToken);
+        if (!isLinked) return Forbid();
+
+        var completedTopics = await _context.ContentEngagements.CountAsync(e => e.LearnerId == learnerId && e.IsCompleted, cancellationToken);
+        var inProgressTopics = await _context.ContentEngagements.CountAsync(e => e.LearnerId == learnerId && !e.IsCompleted, cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(new { CompletedTopics = completedTopics, InProgressTopics = inProgressTopics }));
+    }
 
     [HttpGet("learners/{learnerId}/progress/topics")]
-    public IActionResult TopicProgress(string learnerId) => StatusCode(501);
+    public IActionResult TopicProgress(Guid learnerId) => StatusCode(501);
 
     [HttpGet("learners/{learnerId}/performance")]
-    public IActionResult Performance(string learnerId) => StatusCode(501);
+    public IActionResult Performance(Guid learnerId) => StatusCode(501);
 
     [HttpGet("learners/{learnerId}/activity")]
-    public IActionResult ActivityTimeline(string learnerId) => StatusCode(501);
+    public async Task<IActionResult> ActivityTimeline(Guid learnerId, CancellationToken cancellationToken)
+    {
+        var guardianIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(guardianIdStr, out var guardianUserId)) return Unauthorized();
+
+        var guardian = await _context.GuardianProfiles.FirstOrDefaultAsync(g => g.UserId == guardianUserId, cancellationToken);
+        if (guardian == null) return NotFound("Guardian profile not found.");
+
+        var isLinked = await _context.LearnerGuardians.AnyAsync(lg => lg.LearnerProfileId == learnerId && lg.GuardianProfileId == guardian.Id && lg.CanViewProgress, cancellationToken);
+        if (!isLinked) return Forbid();
+
+        var activities = await _context.ContentEngagements
+            .Include(e => e.EducationalContent)
+            .Where(e => e.LearnerId == learnerId)
+            .OrderByDescending(e => e.LastAccessedAt)
+            .Take(10)
+            .Select(e => new 
+            {
+                e.Id,
+                ContentTitle = e.EducationalContent.Title,
+                e.IsCompleted,
+                e.LastAccessedAt
+            })
+            .ToListAsync(cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(activities));
+    }
 
     [HttpGet("me/progress")]
     public IActionResult OwnProgress() => StatusCode(501);

@@ -94,6 +94,11 @@ public class AuthService : IAuthService
             throw new DomainException("User account is inactive.");
         }
 
+        if (!user.EmailConfirmed)
+        {
+            throw new DomainException("Email address must be verified before you can log in.");
+        }
+
         var roles = Array.Empty<string>(); // Future: Fetch roles from UserRole mapping
         var accessToken = _jwtProvider.GenerateAccessToken(user, roles);
         var refreshToken = _jwtProvider.GenerateRefreshToken();
@@ -195,7 +200,7 @@ public class AuthService : IAuthService
         await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink, cancellationToken);
     }
 
-    public async Task ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
+    public async Task<string> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
         if (user == null || !user.IsActive)
@@ -213,9 +218,15 @@ public class AuthService : IAuthService
         user.PasswordChanged();
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        var userRole = await _context.UserRoles
+            .Include(ur => ur.Role)
+            .FirstOrDefaultAsync(ur => ur.UserId == user.Id, cancellationToken);
+
+        return userRole?.Role?.Name ?? "Learner";
     }
 
-    public async Task VerifyEmailAsync(VerifyEmailRequest request, CancellationToken cancellationToken = default)
+    public async Task<string> VerifyEmailAsync(VerifyEmailRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
         if (user == null)
@@ -230,6 +241,12 @@ public class AuthService : IAuthService
 
         user.ConfirmEmail();
         await _context.SaveChangesAsync(cancellationToken);
+
+        var userRole = await _context.UserRoles
+            .Include(ur => ur.Role)
+            .FirstOrDefaultAsync(ur => ur.UserId == user.Id, cancellationToken);
+
+        return userRole?.Role?.Name ?? "Learner";
     }
 
     public async Task ResendEmailVerificationAsync(ResendEmailVerificationRequest request, CancellationToken cancellationToken = default)

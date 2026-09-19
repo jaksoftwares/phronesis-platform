@@ -91,8 +91,8 @@ public class AuthController : ControllerBase
     [HttpPost("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailRequest request, CancellationToken cancellationToken)
     {
-        await _authService.VerifyEmailAsync(request, cancellationToken);
-        return Ok(ApiResponse.Ok("Email verified successfully."));
+        var role = await _authService.VerifyEmailAsync(request, cancellationToken);
+        return Ok(ApiResponse<object>.Ok(new { Role = role }, "Email verified successfully."));
     }
 
     [HttpPost("resend-email-verification")]
@@ -112,8 +112,8 @@ public class AuthController : ControllerBase
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
     {
-        await _authService.ResetPasswordAsync(request, cancellationToken);
-        return Ok(ApiResponse.Ok("Password reset successfully."));
+        var role = await _authService.ResetPasswordAsync(request, cancellationToken);
+        return Ok(ApiResponse<object>.Ok(new { Role = role }, "Password reset successfully."));
     }
 
     [HttpPost("change-password")]

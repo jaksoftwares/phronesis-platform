@@ -16,6 +16,7 @@ public interface IApplicationDbContext
     DbSet<Phronesis.Domain.Users.LearnerProfile> LearnerProfiles { get; }
     DbSet<Phronesis.Domain.Users.GuardianProfile> GuardianProfiles { get; }
     DbSet<Phronesis.Domain.Users.LearnerGuardian> LearnerGuardians { get; }
+    DbSet<Phronesis.Domain.Users.LearnerGuardianLinkRequest> LearnerGuardianLinkRequests { get; }
     DbSet<Phronesis.Domain.Users.TeacherProfile> TeacherProfiles { get; }
     DbSet<Phronesis.Domain.Users.TeacherApplication> TeacherApplications { get; }
     DbSet<Phronesis.Domain.Users.TeacherDocument> TeacherDocuments { get; }

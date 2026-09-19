@@ -32,4 +32,11 @@ public class TeacherDocument : BaseEntity
         VerificationStatus = DocumentVerificationStatus.Rejected;
         RejectionReason = reason;
     }
+
+    public void UpdateFileUri(string fileUri)
+    {
+        FileUri = fileUri;
+        VerificationStatus = DocumentVerificationStatus.Pending;
+        RejectionReason = null;
+    }
 }

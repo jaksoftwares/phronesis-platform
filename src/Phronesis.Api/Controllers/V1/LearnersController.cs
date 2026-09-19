@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Authentication;
 using Phronesis.Application.Common.Interfaces;
 using Phronesis.Domain.Identity;
@@ -14,11 +15,19 @@ public class LearnersController : ControllerBase
 {
     private readonly IApplicationDbContext _context;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly ILogger<LearnersController> _logger;
+    private readonly IConfiguration _configuration;
 
-    public LearnersController(IApplicationDbContext context, IPasswordHasher passwordHasher)
+    public LearnersController(
+        IApplicationDbContext context, 
+        IPasswordHasher passwordHasher,
+        ILogger<LearnersController> logger,
+        IConfiguration configuration)
     {
         _context = context;
         _passwordHasher = passwordHasher;
+        _logger = logger;
+        _configuration = configuration;
     }
 
     [HttpPost("register")]
@@ -39,17 +48,31 @@ public class LearnersController : ControllerBase
         var user = new User(request.Email, passwordHash, request.FirstName, request.LastName);
         var learnerProfile = new LearnerProfile(user.Id, grade.Id, request.DateOfBirth, request.SchoolName);
 
-        // Fetch "Learner" role
-        var role = _context.Roles.FirstOrDefault(r => r.Name == "Learner");
-        if (role != null)
+        // Fetch or create "Learner" role
+        var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Learner", cancellationToken);
+        if (role == null)
         {
-            _context.UserRoles.Add(new UserRole(user.Id, role.Id));
+            role = new Role("Learner", "Student/Learner");
+            _context.Roles.Add(role);
+            await _context.SaveChangesAsync(cancellationToken);
         }
+        _context.UserRoles.Add(new UserRole(user.Id, role.Id));
+
+        var token = Guid.NewGuid().ToString("N");
+        user.SetEmailVerificationToken(token, DateTime.UtcNow.AddHours(1));
 
         _context.Users.Add(user);
         _context.LearnerProfiles.Add(learnerProfile);
         
         await _context.SaveChangesAsync(cancellationToken);
+
+        var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+        var verificationLink = $"{frontendUrl}/shared/verify-email?token={token}&email={System.Web.HttpUtility.UrlEncode(user.Email)}";
+        
+        _logger.LogInformation("================================================");
+        _logger.LogInformation("DEV ALERT: REGISTRATION EMAIL VERIFICATION LINK");
+        _logger.LogInformation("Link: {VerificationLink}", verificationLink);
+        _logger.LogInformation("================================================");
 
         return Ok(ApiResponse.Ok("Learner registered successfully."));
     }

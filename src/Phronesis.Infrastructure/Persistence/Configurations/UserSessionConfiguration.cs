@@ -26,7 +26,7 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
             .HasMaxLength(50);
 
         builder.HasOne(us => us.User)
-            .WithMany()
+            .WithMany(u => u.Sessions)
             .HasForeignKey(us => us.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }

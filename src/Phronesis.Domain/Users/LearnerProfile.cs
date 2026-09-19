@@ -8,6 +8,7 @@ public class LearnerProfile : BaseEntity
 {
     public Guid UserId { get; private set; }
     public Guid GradeLevelId { get; private set; }
+    public string RegistrationNumber { get; private set; }
     public DateTime DateOfBirth { get; private set; }
     public string? SchoolName { get; private set; }
     public bool IsActive { get; private set; }
@@ -24,6 +25,8 @@ public class LearnerProfile : BaseEntity
     {
         UserId = userId;
         GradeLevelId = gradeLevelId;
+        // Generate a random 6-character alphanumeric registration number
+        RegistrationNumber = "PHR-L-" + Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
         DateOfBirth = dateOfBirth;
         SchoolName = schoolName;
         IsActive = true;

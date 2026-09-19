@@ -68,7 +68,21 @@ public class AcademicController : ControllerBase
     public IActionResult DetachSubject(string gradeId, string subjectId) => StatusCode(501);
 
     [HttpGet("/api/v1/subjects")]
-    public IActionResult ListSubjects() => StatusCode(501);
+    public async Task<IActionResult> ListSubjects(CancellationToken cancellationToken)
+    {
+        var subjects = await _context.Subjects
+            .AsNoTracking()
+            .Select(s => new 
+            {
+                s.Id,
+                s.Name,
+                s.Code,
+                s.Description
+            })
+            .ToListAsync(cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(subjects, "Fetched all subjects."));
+    }
 
     [HttpPost("/api/v1/subjects")]
     public IActionResult CreateSubject() => StatusCode(501);

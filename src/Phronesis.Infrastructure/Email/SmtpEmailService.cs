@@ -26,6 +26,8 @@ public class SmtpEmailService : IEmailService
             if (_settings.SmtpServer == "localhost")
             {
                 _logger.LogInformation("DEV MODE: Bypassing actual SMTP send to {Email}", to);
+                _logger.LogInformation("Email Subject: {Subject}", subject);
+                _logger.LogInformation("Email Body: {Body}", body);
                 return;
             }
 

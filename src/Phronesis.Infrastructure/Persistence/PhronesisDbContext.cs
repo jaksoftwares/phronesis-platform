@@ -29,6 +29,7 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     public DbSet<Phronesis.Domain.Users.LearnerProfile> LearnerProfiles => Set<Phronesis.Domain.Users.LearnerProfile>();
     public DbSet<Phronesis.Domain.Users.GuardianProfile> GuardianProfiles => Set<Phronesis.Domain.Users.GuardianProfile>();
     public DbSet<Phronesis.Domain.Users.LearnerGuardian> LearnerGuardians => Set<Phronesis.Domain.Users.LearnerGuardian>();
+    public DbSet<Phronesis.Domain.Users.LearnerGuardianLinkRequest> LearnerGuardianLinkRequests => Set<Phronesis.Domain.Users.LearnerGuardianLinkRequest>();
     public DbSet<Phronesis.Domain.Users.TeacherProfile> TeacherProfiles => Set<Phronesis.Domain.Users.TeacherProfile>();
     public DbSet<Phronesis.Domain.Users.TeacherApplication> TeacherApplications => Set<Phronesis.Domain.Users.TeacherApplication>();
     public DbSet<Phronesis.Domain.Users.TeacherDocument> TeacherDocuments => Set<Phronesis.Domain.Users.TeacherDocument>();
@@ -95,6 +96,19 @@ public class PhronesisDbContext : DbContext, IApplicationDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        
+        modelBuilder.Entity<Phronesis.Domain.Users.LearnerGuardianLinkRequest>()
+            .HasOne(r => r.LearnerProfile)
+            .WithMany()
+            .HasForeignKey(r => r.LearnerProfileId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Phronesis.Domain.Users.LearnerGuardianLinkRequest>()
+            .HasOne(r => r.GuardianProfile)
+            .WithMany()
+            .HasForeignKey(r => r.GuardianProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         base.OnModelCreating(modelBuilder);
     }
 

@@ -15,11 +15,19 @@ public class TeachersController : ControllerBase
 {
     private readonly IApplicationDbContext _context;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly ILogger<TeachersController> _logger;
+    private readonly IConfiguration _configuration;
 
-    public TeachersController(IApplicationDbContext context, IPasswordHasher passwordHasher)
+    public TeachersController(
+        IApplicationDbContext context, 
+        IPasswordHasher passwordHasher,
+        ILogger<TeachersController> logger,
+        IConfiguration configuration)
     {
         _context = context;
         _passwordHasher = passwordHasher;
+        _logger = logger;
+        _configuration = configuration;
     }
 
     [HttpPost("register")]
@@ -35,15 +43,29 @@ public class TeachersController : ControllerBase
         var teacherProfile = new TeacherProfile(user.Id);
 
         var role = _context.Roles.FirstOrDefault(r => r.Name == "Teacher");
-        if (role != null)
+        if (role == null)
         {
-            _context.UserRoles.Add(new UserRole(user.Id, role.Id));
+            role = new Role("Teacher", "Teaching Staff");
+            _context.Roles.Add(role);
+            await _context.SaveChangesAsync(cancellationToken);
         }
+        _context.UserRoles.Add(new UserRole(user.Id, role.Id));
 
         _context.Users.Add(user);
         _context.TeacherProfiles.Add(teacherProfile);
         
+        var token = Guid.NewGuid().ToString("N");
+        user.SetEmailVerificationToken(token, DateTime.UtcNow.AddHours(1));
+
         await _context.SaveChangesAsync(cancellationToken);
+
+        var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+        var verificationLink = $"{frontendUrl}/shared/verify-email?token={token}&email={System.Web.HttpUtility.UrlEncode(user.Email)}";
+        
+        _logger.LogInformation("================================================");
+        _logger.LogInformation("DEV ALERT: REGISTRATION EMAIL VERIFICATION LINK");
+        _logger.LogInformation("Link: {VerificationLink}", verificationLink);
+        _logger.LogInformation("================================================");
 
         return Ok(ApiResponse.Ok("Teacher registered successfully. Status is Pending verification."));
     }

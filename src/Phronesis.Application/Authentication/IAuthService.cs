@@ -11,9 +11,9 @@ public interface IAuthService
     Task ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken = default);
 
     Task RequestPasswordResetAsync(RequestPasswordResetRequest request, CancellationToken cancellationToken = default);
-    Task ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default);
+    Task<string> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default);
 
-    Task VerifyEmailAsync(VerifyEmailRequest request, CancellationToken cancellationToken = default);
+    Task<string> VerifyEmailAsync(VerifyEmailRequest request, CancellationToken cancellationToken = default);
     Task ResendEmailVerificationAsync(ResendEmailVerificationRequest request, CancellationToken cancellationToken = default);
 
     // Two-Factor Authentication

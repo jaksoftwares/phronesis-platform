@@ -37,6 +37,7 @@ builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IHelpdeskServ
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IConfigurationService, Phronesis.Infrastructure.Services.Operations.ConfigurationService>();
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IReportingService, Phronesis.Infrastructure.Services.Operations.ReportingService>();
 builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IAuditService, Phronesis.Infrastructure.Services.Operations.AuditService>();
+builder.Services.AddScoped<Phronesis.Application.Common.Interfaces.IFileStorageService, Phronesis.Infrastructure.Services.Storage.LocalFileStorageService>();
 
 builder.Services.Configure<Phronesis.Infrastructure.Email.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<Phronesis.Application.Common.Interfaces.IEmailService, Phronesis.Infrastructure.Email.SmtpEmailService>();
@@ -84,6 +85,13 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Seed data
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<Phronesis.Application.Common.Interfaces.IApplicationDbContext>();
+    await Phronesis.Infrastructure.Persistence.DataSeeder.SeedAsync(context);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

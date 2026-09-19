@@ -40,6 +40,18 @@ public class TeacherApplication : BaseEntity
         _documents.Add(document);
     }
 
+    public void RemoveDocument(DocumentType type)
+    {
+        if (Status != ApplicationStatus.Draft)
+            throw new InvalidOperationException("Documents can only be removed while in Draft state.");
+            
+        var existing = _documents.FirstOrDefault(d => d.DocumentType == type);
+        if (existing != null)
+        {
+            _documents.Remove(existing);
+        }
+    }
+
     public void Submit(bool policyAccepted)
     {
         if (!policyAccepted)

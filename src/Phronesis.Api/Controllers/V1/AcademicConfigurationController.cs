@@ -18,6 +18,7 @@ public class AcademicConfigurationController : ControllerBase
         _context = context;
     }
 
+
     [HttpPost("grade-subjects")]
     public async Task<IActionResult> MapSubjectToGrade([FromBody] MapSubjectRequest request, CancellationToken cancellationToken)
     {
