@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Common.Interfaces;
 using Phronesis.Domain.Users;
+using Phronesis.Infrastructure.Persistence;
 using Phronesis.Shared.Responses;
 
 namespace Phronesis.Api.Controllers.V1;
@@ -245,6 +246,44 @@ public class TeacherOnboardingController : ControllerBase
         await _context.SaveChangesAsync(cancellationToken);
 
         return Ok(ApiResponse.Ok("Application submitted successfully."));
+    }
+
+    /// <summary>DEV ONLY – resets a teacher's application back to Draft (use once for data recovery).</summary>
+    [HttpPost("me/reset-to-draft")]
+    public async Task<IActionResult> ResetToDraft(CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        var teacherProfile = await _context.TeacherProfiles
+            .FirstOrDefaultAsync(t => t.UserId == userId, cancellationToken);
+        if (teacherProfile == null) return Unauthorized();
+
+        var application = await _context.TeacherApplications
+            .Include(a => a.Documents)
+            .FirstOrDefaultAsync(a => a.TeacherProfileId == teacherProfile.Id, cancellationToken);
+        if (application == null)
+            return BadRequest(ApiResponse.Failure("No application found."));
+
+        // Force values back via EF property API (bypasses domain guard)
+        var entry = ((PhronesisDbContext)_context).Entry(application);
+        entry.Property("Status").CurrentValue = ApplicationStatus.Draft;
+        entry.Property("SubmittedAt").CurrentValue = null;
+        entry.Property("ReviewedAt").CurrentValue = null;
+        entry.Property("ReviewerId").CurrentValue = null;
+        entry.Property("AdminNotes").CurrentValue = null;
+        entry.Property("InterviewDate").CurrentValue = null;
+        entry.Property("InterviewLink").CurrentValue = null;
+        entry.Property("InterviewNotes").CurrentValue = null;
+
+        // Clean up duplicate documents (keep latest per type)
+        var duplicates = application.Documents
+            .GroupBy(d => d.DocumentType)
+            .SelectMany(g => g.OrderByDescending(d => d.CreatedAt).Skip(1))
+            .ToList();
+        if (duplicates.Any())
+            _context.TeacherDocuments.RemoveRange(duplicates);
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return Ok(ApiResponse.Ok("Application reset to Draft. You can now upload documents and resubmit."));
     }
 }
 
