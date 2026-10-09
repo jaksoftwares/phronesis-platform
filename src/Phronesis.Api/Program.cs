@@ -90,7 +90,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<Phronesis.Application.Common.Interfaces.IApplicationDbContext>();
+    var passwordHasher = scope.ServiceProvider.GetRequiredService<Phronesis.Application.Authentication.IPasswordHasher>();
     await Phronesis.Infrastructure.Persistence.DataSeeder.SeedAsync(context);
+    await Phronesis.Infrastructure.Persistence.IdentitySeeder.SeedAsync(context, passwordHasher);
 }
 
 // Configure the HTTP request pipeline.

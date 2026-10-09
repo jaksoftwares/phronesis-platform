@@ -99,7 +99,12 @@ public class AuthService : IAuthService
             throw new DomainException("Email address must be verified before you can log in.");
         }
 
-        var roles = Array.Empty<string>(); // Future: Fetch roles from UserRole mapping
+        var roles = await _context.UserRoles
+            .Include(ur => ur.Role)
+            .Where(ur => ur.UserId == user.Id)
+            .Select(ur => ur.Role.Name)
+            .ToArrayAsync(cancellationToken);
+
         var accessToken = _jwtProvider.GenerateAccessToken(user, roles);
         var refreshToken = _jwtProvider.GenerateRefreshToken();
 
@@ -129,7 +134,12 @@ public class AuthService : IAuthService
         // Revoke the old token (Refresh Token Rotation)
         session.Revoke();
 
-        var roles = Array.Empty<string>(); // Future: Fetch roles
+        var roles = await _context.UserRoles
+            .Include(ur => ur.Role)
+            .Where(ur => ur.UserId == session.UserId)
+            .Select(ur => ur.Role.Name)
+            .ToArrayAsync(cancellationToken);
+
         var newAccessToken = _jwtProvider.GenerateAccessToken(session.User, roles);
         var newRefreshToken = _jwtProvider.GenerateRefreshToken();
 
