@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Common.Interfaces;
@@ -81,6 +81,38 @@ public class AdminUsersController : ControllerBase
         await _context.SaveChangesAsync(default);
 
         return Ok(new { message = "User activated successfully." });
+    }
+
+    public class AssignRolesDto
+    {
+        public List<string> Roles { get; set; } = new();
+    }
+
+    [HttpPut("{id}/roles")]
+    public async Task<IActionResult> AssignRoles(Guid id, [FromBody] AssignRolesDto req)
+    {
+        var user = await _context.Users
+            .Include(u => u.UserRoles)
+            .FirstOrDefaultAsync(u => u.Id == id);
+            
+        if (user == null) return NotFound(new { message = "User not found" });
+
+        // Remove existing roles
+        _context.UserRoles.RemoveRange(user.UserRoles);
+        
+        // Add new roles
+        var validRoles = await _context.Roles
+            .Where(r => req.Roles.Contains(r.Name))
+            .ToListAsync();
+            
+        foreach (var role in validRoles)
+        {
+            user.UserRoles.Add(new UserRole(user.Id, role.Id));
+        }
+
+        await _context.SaveChangesAsync(default);
+
+        return Ok(new { message = "User roles updated successfully." });
     }
 }
 

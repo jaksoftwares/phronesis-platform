@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Common.Interfaces;
 using Phronesis.Domain.Identity;
@@ -155,6 +155,76 @@ public class GuardiansController : ControllerBase
         await _context.SaveChangesAsync(cancellationToken);
 
         return Ok(ApiResponse.Ok("Invite sent to learner successfully."));
+    }
+
+    [HttpGet("me/learners/{learnerId}/progress")]
+    public async Task<IActionResult> GetLearnerProgress(Guid learnerId, CancellationToken cancellationToken)
+    {
+        var userIdStr = HttpContext.User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(userIdStr, out var userId))
+            return Unauthorized();
+
+        var guardian = await _context.GuardianProfiles
+            .FirstOrDefaultAsync(g => g.UserId == userId, cancellationToken);
+            
+        if (guardian == null) return NotFound("Guardian profile not found.");
+
+        var link = await _context.LearnerGuardians
+            .Include(lg => lg.LearnerProfile)
+            .ThenInclude(lp => lp.User)
+            .FirstOrDefaultAsync(lg => lg.LearnerProfileId == learnerId && lg.GuardianProfileId == guardian.Id, cancellationToken);
+
+        if (link == null) return NotFound("Linked learner not found.");
+
+        // Return mocked progress for MVP (In reality, we would query Assessments, Grades, and Attendance)
+        var data = new {
+            learner = new {
+                link.LearnerProfile.User.FirstName,
+                link.LearnerProfile.User.LastName
+            },
+            progress = new {
+                gpa = "3.8",
+                attendanceRate = "95",
+                assessmentsCount = 12,
+                studyHours = 45,
+                recentGrades = new[] {
+                    new { id = 1, name = "Mid-Term Algebra I", subject = "Mathematics", date = "Oct 05, 2026", score = "92%", passed = true },
+                    new { id = 2, name = "Cell Biology Quiz", subject = "Science", date = "Sep 28, 2026", score = "88%", passed = true },
+                    new { id = 3, name = "World History Essay", subject = "History", date = "Sep 15, 2026", score = "75%", passed = true }
+                }
+            }
+        };
+
+        return Ok(ApiResponse<object>.Ok(data, "Fetched learner progress."));
+    }
+
+    [HttpGet("me/link-requests/pending")]
+    public async Task<IActionResult> GetPendingRequests(CancellationToken cancellationToken)
+    {
+        var userIdStr = HttpContext.User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(userIdStr, out var userId))
+            return Unauthorized();
+
+        var guardian = await _context.GuardianProfiles
+            .FirstOrDefaultAsync(g => g.UserId == userId, cancellationToken);
+            
+        if (guardian == null) return NotFound("Guardian profile not found.");
+
+        var requests = await _context.LearnerGuardianLinkRequests
+            .Include(r => r.LearnerProfile)
+            .ThenInclude(lp => lp.User)
+            .Where(r => r.GuardianProfileId == guardian.Id && r.Status == LinkRequestStatus.Pending)
+            .Select(r => new {
+                r.Id,
+                r.LearnerProfileId,
+                r.LearnerProfile.User.FirstName,
+                r.LearnerProfile.User.LastName,
+                r.RelationshipType,
+                r.CreatedAt
+            })
+            .ToListAsync(cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(requests, "Fetched pending requests."));
     }
 
     [HttpPost("me/link-requests/{requestId}/accept")]

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Common.Interfaces;
@@ -150,7 +150,7 @@ public class AdminTeacherApplicationsController : ControllerBase
 
         if (app == null) return NotFound();
 
-        app.Approve(req.Notes);
+        app.Approve(req.Notes ?? string.Empty);
         
         // Approve profile
         app.TeacherProfile.SetVerificationState(TeacherVerificationState.Verified);
