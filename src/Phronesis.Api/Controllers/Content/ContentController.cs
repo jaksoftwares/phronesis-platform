@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Common.Interfaces;
 using Phronesis.Domain.Content;
@@ -113,6 +113,31 @@ public class ContentController : ControllerBase
             .ToListAsync(cancellationToken);
 
         return Ok(ApiResponse<object>.Ok(contents, "Author content fetched."));
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> GetMyContent(CancellationToken cancellationToken)
+    {
+        var userIdStr = HttpContext.User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(userIdStr, out var userId)) return Unauthorized();
+
+        var contents = await _context.EducationalContents
+            .Include(c => c.Subject)
+            .Where(c => c.AuthorId == userId)
+            .Select(c => new
+            {
+                id = c.Id.ToString(),
+                title = c.Title,
+                type = c.ContentType.ToString(),
+                subject = c.Subject != null ? c.Subject.Name : "General",
+                views = 0, // Mock views
+                date = c.CreatedAt.ToString("MMM dd, yyyy"),
+                status = c.Status.ToString()
+            })
+            .OrderByDescending(c => c.date)
+            .ToListAsync(cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(contents, "Fetched my content."));
     }
 }
 

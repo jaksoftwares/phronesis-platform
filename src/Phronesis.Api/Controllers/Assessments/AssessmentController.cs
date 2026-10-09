@@ -69,6 +69,29 @@ public class AssessmentController : ControllerBase
         return Ok(ApiResponse<object>.Ok(result));
     }
 
+    [HttpGet("teacher/me")]
+    public async Task<IActionResult> GetTeacherAssessments(CancellationToken cancellationToken)
+    {
+        // Mocking for now: return all published assessments with mock class assignments
+        var assessments = await _context.Assessments
+            .Include(a => a.Subject)
+            .OrderByDescending(a => a.CreatedAt)
+            .Select(a => new
+            {
+                id = a.Id,
+                title = a.Title,
+                subject = a.Subject != null ? a.Subject.Name : "General",
+                assignedClass = "Grade 11 Alpha", // Mock
+                dueDate = DateTime.UtcNow.AddDays(7).ToString("MMM dd, yyyy"),
+                completionRate = 65, // Mock
+                avgScore = 78, // Mock
+                status = a.IsPublished ? "Active" : "Draft"
+            })
+            .ToListAsync(cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(assessments, "Fetched teacher assessments."));
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateAssessment([FromBody] CreateAssessmentRequest request, CancellationToken cancellationToken)
     {
