@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+
+using Microsoft.EntityFrameworkCore;
+using Phronesis.Application.Common.Interfaces;
+using Phronesis.Shared.Responses;
 
 namespace Phronesis.Api.Controllers.Classes;
 
@@ -6,6 +10,12 @@ namespace Phronesis.Api.Controllers.Classes;
 [Route("api/v1")]
 public class VirtualClassesController : ControllerBase
 {
+    private readonly IApplicationDbContext _context;
+
+    public VirtualClassesController(IApplicationDbContext context)
+    {
+        _context = context;
+    }
     [HttpGet("classes")]
     public IActionResult ListOfferings() => StatusCode(501);
 
@@ -52,7 +62,26 @@ public class VirtualClassesController : ControllerBase
     public IActionResult GetBooking(string bookingId) => StatusCode(501);
 
     [HttpGet("me/bookings")]
-    public IActionResult OwnBookings() => StatusCode(501);
+    public async Task<IActionResult> OwnBookings(CancellationToken cancellationToken)
+    {
+        // Mock returning upcoming sessions for the calendar
+        var sessions = await _context.ClassSessions
+            .Include(cs => cs.VirtualClass)
+            .OrderBy(cs => cs.StartTime)
+            .Take(10)
+            .Select(cs => new
+            {
+                Id = cs.Id,
+                Title = cs.Title,
+                ClassName = cs.VirtualClass.Name,
+                StartTime = cs.StartTime,
+                EndTime = cs.EndTime,
+                IsLive = cs.StartTime <= DateTime.UtcNow && cs.EndTime > DateTime.UtcNow
+            })
+            .ToListAsync(cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(sessions));
+    }
 
     [HttpPost("bookings/{bookingId}/confirm")]
     public IActionResult ConfirmBooking(string bookingId) => StatusCode(501);
@@ -64,7 +93,22 @@ public class VirtualClassesController : ControllerBase
     public IActionResult CancelBooking(string bookingId) => StatusCode(501);
 
     [HttpPost("sessions/{sessionId}/join")]
-    public IActionResult JoinSession(string sessionId) => StatusCode(501);
+    public async Task<IActionResult> JoinSession(Guid sessionId, CancellationToken cancellationToken)
+    {
+        var session = await _context.ClassSessions
+            .Include(cs => cs.VirtualClass)
+            .FirstOrDefaultAsync(cs => cs.Id == sessionId, cancellationToken);
+            
+        if (session == null) return NotFound("Session not found.");
+        
+        return Ok(ApiResponse<object>.Ok(new {
+            session.Id,
+            session.Title,
+            session.MeetingLink,
+            HostName = "Instructor",
+            IsLive = session.StartTime <= DateTime.UtcNow && session.EndTime > DateTime.UtcNow
+        }));
+    }
 
     [HttpGet("sessions/{sessionId}/classroom")]
     public IActionResult ClassroomState(string sessionId) => StatusCode(501);

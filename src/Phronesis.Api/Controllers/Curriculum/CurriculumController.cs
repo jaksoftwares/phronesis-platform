@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Common.Interfaces;
 using Phronesis.Domain.Academic;
@@ -20,7 +20,7 @@ public class CurriculumController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateCurriculum([FromBody] CreateCurriculumRequest request, CancellationToken cancellationToken)
     {
-        var curriculum = new Curriculum(request.Name, request.Version, request.Description);
+        var curriculum = new Phronesis.Domain.Academic.Curriculum(request.Name, request.Version, request.Description);
         _context.Curricula.Add(curriculum);
         await _context.SaveChangesAsync(cancellationToken);
 

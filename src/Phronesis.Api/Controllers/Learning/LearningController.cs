@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Common.Interfaces;
 using Phronesis.Shared.Responses;
@@ -101,13 +101,67 @@ public class LearningController : ControllerBase
     }
 
     [HttpGet("me/bookmarks")]
-    public IActionResult Bookmarks() => StatusCode(501);
+    public async Task<IActionResult> Bookmarks(CancellationToken cancellationToken)
+    {
+        var userIdStr = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? HttpContext.User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(userIdStr, out var userId)) return Unauthorized();
 
-    [HttpPost("me/bookmarks")]
-    public IActionResult BookmarkResource() => StatusCode(501);
+        var bookmarks = await _context.SavedContents
+            .Include(sc => sc.EducationalContent)
+                .ThenInclude(ec => ec.Tags)
+            .Include(sc => sc.EducationalContent)
+                .ThenInclude(ec => ec.Attachments.Where(a => a.IsPrimary))
+            .Where(sc => sc.UserId == userId && sc.EducationalContent.Status == Phronesis.Domain.Content.ContentStatus.Published)
+            .OrderByDescending(sc => sc.CreatedAt)
+            .Select(sc => new
+            {
+                sc.EducationalContentId,
+                sc.EducationalContent.Title,
+                sc.EducationalContent.ContentType,
+                sc.EducationalContent.IsPremium,
+                Tags = sc.EducationalContent.Tags.Select(t => t.Name),
+                PrimaryAttachmentUrl = sc.EducationalContent.Attachments.FirstOrDefault() != null ? sc.EducationalContent.Attachments.First().FileUri : null,
+                SavedAt = sc.CreatedAt
+            })
+            .ToListAsync(cancellationToken);
+
+        return Ok(ApiResponse<object>.Ok(bookmarks));
+    }
+
+    [HttpPost("me/bookmarks/{resourceId}")]
+    public async Task<IActionResult> BookmarkResource(Guid resourceId, CancellationToken cancellationToken)
+    {
+        var userIdStr = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? HttpContext.User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(userIdStr, out var userId)) return Unauthorized();
+
+        var alreadySaved = await _context.SavedContents
+            .AnyAsync(sc => sc.UserId == userId && sc.EducationalContentId == resourceId, cancellationToken);
+
+        if (alreadySaved) return BadRequest(ApiResponse.Failure("Content is already bookmarked."));
+
+        var savedContent = new Phronesis.Domain.Content.SavedContent(userId, resourceId);
+        _context.SavedContents.Add(savedContent);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Ok(ApiResponse.Ok("Content bookmarked."));
+    }
 
     [HttpDelete("me/bookmarks/{resourceId}")]
-    public IActionResult RemoveBookmark(string resourceId) => StatusCode(501);
+    public async Task<IActionResult> RemoveBookmark(Guid resourceId, CancellationToken cancellationToken)
+    {
+        var userIdStr = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? HttpContext.User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(userIdStr, out var userId)) return Unauthorized();
+
+        var savedContent = await _context.SavedContents
+            .FirstOrDefaultAsync(sc => sc.UserId == userId && sc.EducationalContentId == resourceId, cancellationToken);
+
+        if (savedContent == null) return NotFound();
+
+        _context.SavedContents.Remove(savedContent);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Ok(ApiResponse.Ok("Bookmark removed."));
+    }
 
     [HttpGet("me/recent-resources")]
     public async Task<IActionResult> RecentResources(CancellationToken cancellationToken)

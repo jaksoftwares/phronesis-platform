@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Phronesis.Application.Common.Interfaces;
 using Phronesis.Domain.Learning;
@@ -15,6 +15,58 @@ public class AssessmentController : ControllerBase
     public AssessmentController(IApplicationDbContext context)
     {
         _context = context;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAssessments([FromQuery] Guid? subjectId, [FromQuery] string? status, CancellationToken cancellationToken)
+    {
+        var learnerIdStr = HttpContext.User.FindFirst("sub")?.Value;
+        if (!Guid.TryParse(learnerIdStr, out var learnerId)) return Unauthorized();
+
+        var query = _context.Assessments
+            .Where(a => a.IsPublished)
+            .AsQueryable();
+
+        if (subjectId.HasValue)
+        {
+            query = query.Where(a => a.SubjectId == subjectId.Value);
+        }
+
+        var assessments = await query
+            .Select(a => new
+            {
+                a.Id,
+                a.Title,
+                a.Description,
+                a.DurationMinutes,
+                a.Type,
+                SubjectName = a.SubjectId.ToString(), // Mock joining with subject
+                TotalQuestions = a.Questions.Count,
+                Attempt = _context.AssessmentAttempts
+                            .Where(att => att.AssessmentId == a.Id && att.LearnerId == learnerId)
+                            .OrderByDescending(att => att.StartedAt)
+                            .FirstOrDefault()
+            })
+            .ToListAsync(cancellationToken);
+
+        var result = assessments.Select(a => new
+        {
+            a.Id,
+            a.Title,
+            Subject = "Subject", // Placeholder
+            Type = a.Type.ToString(),
+            Duration = a.DurationMinutes,
+            TotalQuestions = a.TotalQuestions,
+            Status = a.Attempt == null ? "Pending" : (a.Attempt.Status == Phronesis.Domain.Learning.AttemptStatus.Completed ? "Completed" : "In Progress"),
+            Score = a.Attempt?.ScorePercentage
+        });
+
+        if (!string.IsNullOrEmpty(status) && status != "All")
+        {
+            result = result.Where(r => r.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return Ok(ApiResponse<object>.Ok(result));
     }
 
     [HttpPost]
