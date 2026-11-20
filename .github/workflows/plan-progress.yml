@@ -1,0 +1,22 @@
+name: Plan progress
+
+on:
+  pull_request:
+    paths: ['docs/plan/**', 'scripts/plan-progress.mjs']
+  push:
+    branches: [dev, test, main]
+    paths: ['docs/plan/**', 'scripts/plan-progress.mjs']
+
+permissions:
+  contents: read
+
+jobs:
+  progress-report-is-current:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check PROGRESS.md matches the implementation plan
+        run: node scripts/plan-progress.mjs --check

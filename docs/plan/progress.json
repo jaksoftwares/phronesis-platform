@@ -1,0 +1,1093 @@
+{
+  "overallPercent": 0,
+  "totalWeeks": 44,
+  "totals": {
+    "done": 0,
+    "in-progress": 0,
+    "blocked": 0,
+    "todo": 160
+  },
+  "currentPhase": 0,
+  "phases": [
+    {
+      "number": 0,
+      "title": "Reset & reorganisation",
+      "weeks": 1.5,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 19
+      },
+      "total": 19,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P0.1.1",
+          "title": "Tag both repos `legacy-v0` (backend `3a143f2`, frontend `fc6ffd9`) and note in README that legacy code is reference only.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.1.2",
+          "title": "Commit the staged untracking of `wwwroot/uploads` and the `.gitignore` change.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.1.3",
+          "title": "Move legacy backend code out of the build: `legacy/` folder (excluded from the solution) containing old controllers/services for reference during module reviews. The API is left with only real endpoints (health); all 501 stubs and mock providers are removed from the running app.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.1.4",
+          "title": "Remove `phronesis.db`, dev HTML landing page and markdown spec route from `Program.cs`.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.2.1",
+          "title": "Create the structure in [target architecture §9](target-architecture.md#9-documentation-structure-target): `product/`, `specs/`, `plan/`, `adr/`, `audit/`, `runbooks/`, `archive/`.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.2.2",
+          "title": "Move and rename: `problem-definition-and-discovery.md` → `product/`, `system-modules.md` → `product/`, DB and API specs → `specs/`; give extension-less files `.md` extensions; fix misspelt names.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.2.3",
+          "title": "Move walkthrough reports (identity, staff, teacher, M11–M14, media, search) and superseded plans to `archive/` with a header \"superseded by the implementation plan of 2026-11-20\".",
+          "status": "todo"
+        },
+        {
+          "id": "P0.2.4",
+          "title": "Delete empty `problemstatement.md`.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.2.5",
+          "title": "Write `docs/README.md`: index + \"source of truth\" table.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.2.6",
+          "title": "Write ADRs 0001–0008 from decisions D-001, D-007, D-011, D-012, D-013 and the token design.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.3.1",
+          "title": "`docs/README.md` linking to this plan; keep only frontend-specific docs.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.3.2",
+          "title": "Replace the three old brand documents with `docs/design-system/brand-and-design-system.md`; move old ones to `docs/archive/`.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.3.3",
+          "title": "Move `learner_portal_implementation_plan.md` and old plans to `docs/archive/`.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.3.4",
+          "title": "Rename `public/new-logos-phronesis/` → `public/brand/source/` (raw files) and retire the old blue/teal brand PDFs to the archive.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.4.1",
+          "title": "Move all legacy pages and their components out of `src/app` into `legacy/` (outside the build, kept for reference during each module's rebuild). The routed app starts clean, with no mock-data screens, so `next build` passes without patching broken legacy code.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.4.2",
+          "title": "Remove dev routes (`/brand-audit`, `/identity`) and the dead `lib/api.ts`.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.4.3",
+          "title": "Upgrade vulnerable dependencies (`next`, `sharp`, `zod`, transitive) and re-run `npm audit`.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.5.1",
+          "title": "Walk through open decisions O-01…O-14 with Phronesis; record outcomes or confirm defaults; set gates.",
+          "status": "todo"
+        },
+        {
+          "id": "P0.5.2",
+          "title": "Request vector logo files (O-12).",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 1,
+      "title": "Platform foundation, DevOps & design system",
+      "weeks": 5,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 39
+      },
+      "total": 39,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P1.1.1",
+          "title": "`Phronesis.slnx` lists all projects; `Directory.Build.props` (nullable, warnings as errors, analyzers, deterministic builds); `Directory.Packages.props` (central versions).",
+          "status": "todo"
+        },
+        {
+          "id": "P1.1.2",
+          "title": "Layer and module folder structure per target architecture §4.1; `.editorconfig`.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.1.3",
+          "title": "Building blocks: `Entity`, `AggregateRoot`, `ValueObject`, `DomainEvent`, `Result`/error model, `Money`, `IClock`, `ICurrentUser`.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.1.4",
+          "title": "Command/query handler abstractions + decorators (validation, transaction, audit, logging) registered with Scrutor.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.1.5",
+          "title": "Error handling: ProblemDetails with stable codes; global exception handler; consistent success envelope helpers.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.1.6",
+          "title": "API versioning (`/api/v1`), OpenAPI + Scalar, OpenAPI JSON exported in CI to `docs/api/openapi.v1.json`.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.1.7",
+          "title": "Authorization foundation: fallback policy = authenticated + explicit policy required; permission policy provider (no undefined-policy fallthrough); architecture test \"every endpoint declares a policy\".",
+          "status": "todo"
+        },
+        {
+          "id": "P1.2.1",
+          "title": "PostgreSQL 17 with Npgsql; snake-case naming; schema-per-module configuration; UUID v7 key generation.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.2.2",
+          "title": "Interceptors: timestamps, audit trail, outbox capture of domain events.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.2.3",
+          "title": "New migration baseline (legacy SQL Server migrations archived); migrations run as a separate deploy step, never at app start in production.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.2.4",
+          "title": "Environment-aware seeding framework (reference data everywhere; demo data local/staging only; no passwords in code: first Super Admin created by a one-time CLI command).",
+          "status": "todo"
+        },
+        {
+          "id": "P1.2.5",
+          "title": "Hangfire on PostgreSQL + outbox dispatcher job; dashboard behind `admin.jobs` permission.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.2.6",
+          "title": "`IFileStorage` (private disk) with validation pipeline (allow-lists, magic bytes, size, server-generated keys).",
+          "status": "todo"
+        },
+        {
+          "id": "P1.2.7",
+          "title": "Email abstraction with templating (Razor or MJML-based) + Mailpit in development.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.3.1",
+          "title": "Serilog JSON logging with PII/secret redaction (no request bodies); correlation IDs across API and web.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.3.2",
+          "title": "OpenTelemetry traces/metrics exporter (configurable endpoint); Sentry-compatible error tracking.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.3.3",
+          "title": "Health checks: live/ready (PostgreSQL, storage, Hangfire).",
+          "status": "todo"
+        },
+        {
+          "id": "P1.3.4",
+          "title": "Rate limiting policies; security headers; strict CORS from configuration.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.3.5",
+          "title": "Options validation at startup (fail fast on missing secrets); `.env.example` complete.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.4.1",
+          "title": "Test projects per target architecture; Testcontainers PostgreSQL fixture; Respawn reset; test data builders.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.4.2",
+          "title": "Architecture tests: layer rules, module boundaries, no `DbContext` in Api, endpoint-policy rule.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.4.3",
+          "title": "Authorization matrix test harness (role × endpoint → expected status) ready for every later phase.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.4.4",
+          "title": "Release-hygiene guards in CI (both repos): fail on placeholder copy (\"coming soon\", \"lorem ipsum\", \"TBD\", \"under construction\"), mock/fixture imports outside test folders, endpoints returning 501, mock providers registered outside Development/Test, dev-only routes in production builds, `console.log` and `alert()` in shipped code.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.4.5",
+          "title": "Server-side feature flags for module release (routes 404 and navigation hidden while off), managed by Super Admin, audited; frontend navigation built only from enabled modules.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.5.1",
+          "title": "`deploy/docker-compose.dev.yml` (PostgreSQL, Mailpit), `.staging.yml`, `.prod.yml`, Caddyfile, Postgres tuning for KVM 2, resource limits per [memory budget](target-architecture.md#31-memory-budget-production--small-staging-on-the-same-vps).",
+          "status": "todo"
+        },
+        {
+          "id": "P1.5.2",
+          "title": "Dockerfiles: API (chiselled/non-root), web (Next standalone, non-root).",
+          "status": "todo"
+        },
+        {
+          "id": "P1.5.3",
+          "title": "GitHub Actions: backend and frontend CI on pushes to `dev`, `test` and `main`; image build → GHCR; deploy to staging on push to `test`; deploy to production on push to `main` (tagged) with manual approval; branch protection on all three.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.5.4",
+          "title": "Provision the Hostinger KVM 2: hardening (SSH keys, ufw, fail2ban, unattended upgrades), Docker, DNS (O-10), Caddy TLS, staging basic-auth.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.5.5",
+          "title": "Backups: nightly DB + files to off-box encrypted storage; restore script; first restore drill.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.5.6",
+          "title": "External uptime monitoring; alert channel.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.5.7",
+          "title": "Runbooks: local setup, deploy, rollback, backup/restore, secrets rotation.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.6.1",
+          "title": "New folder structure (target architecture §5.1); `middleware.ts` → `proxy.ts`; strict TypeScript; ESLint zero-error baseline; Prettier; Husky + lint-staged.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.6.2",
+          "title": "Generated API client pipeline (OpenAPI → typed client + TanStack Query hooks); query client defaults; error normalisation from ProblemDetails.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.6.3",
+          "title": "Session handling: in-memory access token, refresh via cookie, `/auth/me`, permission helpers, surface guards (wired fully in Phase 2).",
+          "status": "todo"
+        },
+        {
+          "id": "P1.6.4",
+          "title": "Brand tokens (colour, type, spacing, radius, elevation, motion) as CSS variables + Tailwind v4 theme; self-hosted fonts via `next/font`.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.6.5",
+          "title": "Core components: Button, IconButton, Link, Input, Textarea, Select, Combobox, Checkbox, Radio, Switch, DatePicker, FileUpload, Form field, Dialog, Drawer, Dropdown, Tabs, Table (sortable, paginated), Card, Badge/Status pill, Avatar, Toast, Alert, Skeleton, EmptyState, ErrorState, Pagination, Breadcrumbs, Stepper, ProgressBar, Tooltip.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.6.6",
+          "title": "Layout shells: Public header/footer, Portal shell (learner/family/teach), Staff Console shell (permission-driven nav), Account shell.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.6.7",
+          "title": "Component catalogue in Storybook (separate from the app, never deployed with it) with accessibility checks.",
+          "status": "todo"
+        },
+        {
+          "id": "P1.6.8",
+          "title": "Vitest + Testing Library, Playwright setup with a smoke test, axe checks.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Identity, access & staff",
+      "weeks": 3.5,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 14
+      },
+      "total": 14,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P2.1",
+          "title": "Users, credentials, email verification (hashed single-use tokens), login with lockout and rate limits, logout.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.2",
+          "title": "Sessions: rotating hashed refresh tokens, reuse detection, device list, revoke one/all; revoke all on password reset/suspension.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.3",
+          "title": "Password reset and change; password policy; breached-password check.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.4",
+          "title": "MFA (TOTP + recovery codes), mandatory for staff roles.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.5",
+          "title": "Roles and permissions seeded from code (role model in decisions §9); permission matrix document generated from code; role assignment with separation-of-duties rules; changes audited.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.6",
+          "title": "Staff: departments, staff profiles, invitation flow (email link to set password + MFA — no temporary passwords in responses), suspend/reactivate.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.7",
+          "title": "Account status (pending/active/suspended/deactivated) separate from profile statuses.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.8",
+          "title": "Agreements framework: versioned legal documents and acceptance records (terms, privacy; teacher agreement later).",
+          "status": "todo"
+        },
+        {
+          "id": "P2.9",
+          "title": "Security events log (login success/failure, MFA changes, role changes) and audit for all admin actions.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.10",
+          "title": "Transactional emails: verify email, reset password, staff invitation, security alerts.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.F1",
+          "title": "Single `/login` with role-based landing; register (learner/guardian entry points), verify email, forgot/reset password, MFA setup and challenge.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.F2",
+          "title": "`/account`: profile, password, MFA, sessions, agreements.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.F3",
+          "title": "Staff Console: Users (search, filter, status actions), Roles & permissions (view; edit for Super Admin), Staff & invitations, Security events.",
+          "status": "todo"
+        },
+        {
+          "id": "P2.F4",
+          "title": "Surface guards and 403/404 pages.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Learners, guardians, teachers & verification",
+      "weeks": 4,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 13
+      },
+      "total": 13,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P3.1",
+          "title": "Learner profile (admission number, date of birth, curriculum, current grade, county, status); one canonical learner ID used everywhere (fixes H-02). County is also captured for guardians, teachers and store buyers to support national operations reporting (P10.7).",
+          "status": "todo"
+        },
+        {
+          "id": "P3.2",
+          "title": "Guardian profile; guardian–learner links with relationship, primary payer flag, consent record and visibility permissions; link invitations in both directions with expiry.",
+          "status": "todo"
+        },
+        {
+          "id": "P3.3",
+          "title": "Minor rules per O-02 (consent gate on purchases and live classes).",
+          "status": "todo"
+        },
+        {
+          "id": "P3.4",
+          "title": "Teacher profile (bio, qualifications, experience, competences per grade/subject, status: Applicant → Verified → Onboarding → Active → Suspended/Revoked).",
+          "status": "todo"
+        },
+        {
+          "id": "P3.5",
+          "title": "Teacher application state machine: Draft → Submitted → Under review → (Interview scheduled) → Changes requested → Approved / Rejected; resubmission rules; history.",
+          "status": "todo"
+        },
+        {
+          "id": "P3.6",
+          "title": "Documents: typed (ID, certificates, TSC registration, etc.), validated uploads to private storage, per-document verification status, reviewer-only access with logged views.",
+          "status": "todo"
+        },
+        {
+          "id": "P3.7",
+          "title": "Reviewer workflow: queue, assignment, completeness checklist, notes, interview scheduling with manual Meet link, decision with reason, notifications to applicant.",
+          "status": "todo"
+        },
+        {
+          "id": "P3.8",
+          "title": "Teacher agreement acceptance (conduct, safeguarding, content licence); onboarding fee step modelled as a pending requirement (activated in Phase 7).",
+          "status": "todo"
+        },
+        {
+          "id": "P3.9",
+          "title": "Suspension/revocation with reason, audit, and effect on permissions.",
+          "status": "todo"
+        },
+        {
+          "id": "P3.F1",
+          "title": "Learner onboarding (grade, subjects); guardian onboarding and linking flows; consent screens.",
+          "status": "todo"
+        },
+        {
+          "id": "P3.F2",
+          "title": "Teacher Arena: application wizard (profile → competences → documents → review & submit), status tracker, change requests.",
+          "status": "todo"
+        },
+        {
+          "id": "P3.F3",
+          "title": "Staff Console → Academic review: applications queue, application detail with document viewer, checklist, interview, decision.",
+          "status": "todo"
+        },
+        {
+          "id": "P3.F4",
+          "title": "Family portal shell: linked learners list and link management.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Curriculum & academic configuration",
+      "weeks": 2,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 6
+      },
+      "total": 6,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P4.1",
+          "title": "Curriculum and curriculum versions; education levels; grades; subjects; grade–subject mapping; strands; sub-strands (topics); learning objectives; ordering; prerequisites. Nothing hard-coded (data-driven per `initial.md` §10).",
+          "status": "todo"
+        },
+        {
+          "id": "P4.2",
+          "title": "Spreadsheet import (validate → preview diff → apply) and export; audit of taxonomy changes; archive instead of delete.",
+          "status": "todo"
+        },
+        {
+          "id": "P4.3",
+          "title": "Teacher competence mapping uses the taxonomy (migrate Phase 3 free-text if any).",
+          "status": "todo"
+        },
+        {
+          "id": "P4.4",
+          "title": "Cached public read endpoints (grades → subjects → topics).",
+          "status": "todo"
+        },
+        {
+          "id": "P4.5",
+          "title": "Frontend: Staff Console → Curriculum manager (tree editor, reorder, import wizard); public/learner subject browser components.",
+          "status": "todo"
+        },
+        {
+          "id": "P4.6",
+          "title": "Import the approved CBC taxonomy for the launch grades.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Content, review, secure media & discovery",
+      "weeks": 5,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 10
+      },
+      "total": 10,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P5.1",
+          "title": "Resource aggregate with versions; resource types (notes, past papers, topical questions, exercises, exams, marking schemes, videos, animations, class materials, teacher resources); multi-classification (grades, subjects, topics, objectives); tags; licensing and ownership metadata.",
+          "status": "todo"
+        },
+        {
+          "id": "P5.2",
+          "title": "Lifecycle: Draft → Submitted → Under review → Changes requested → Approved → Scheduled → Published → Archived; Rejected. Author ≠ reviewer; checklist; threaded comments; publish scheduling; new version of a published resource goes through review while the old version stays live.",
+          "status": "todo"
+        },
+        {
+          "id": "P5.3",
+          "title": "Access rules per resource: free, premium (entitlement key), staff-only; preview segments.",
+          "status": "todo"
+        },
+        {
+          "id": "P5.4",
+          "title": "Media: upload sessions, validation, private storage, processing status; signed short-lived access endpoints streaming files; PDF viewing with per-user watermark; download policy; access logging; video via external host with signed playback (O-07).",
+          "status": "todo"
+        },
+        {
+          "id": "P5.5",
+          "title": "Discovery: PostgreSQL full-text search with weights, trigram fuzzy matching, filters (grade, subject, topic, type, free/premium), sorting, facets; featured, recent and popular lists.",
+          "status": "todo"
+        },
+        {
+          "id": "P5.6",
+          "title": "Events: `ResourcePublished` → notifications/projections via outbox.",
+          "status": "todo"
+        },
+        {
+          "id": "P5.7",
+          "title": "Exam-paper metadata on resources: exam type (past paper, mock, end-of-term, opener, county/zonal, Phronesis original), year, term, paper number, duration, total marks, grade(s), subject, and a linked marking scheme resource (kept as a separate, restricted resource). Rights record per paper (owner, licence, evidence; O-18). Prepares the Phase 7 store.",
+          "status": "todo"
+        },
+        {
+          "id": "P5.F1",
+          "title": "Content studio (Staff Console → Content, and Teacher Arena → My contributions): create, classify, upload, preview, submit, respond to review.",
+          "status": "todo"
+        },
+        {
+          "id": "P5.F2",
+          "title": "Review queue and review screen (side-by-side preview, checklist, comments, decision).",
+          "status": "todo"
+        },
+        {
+          "id": "P5.F3",
+          "title": "Learner library: subject → topic pages, resource cards, search with filters, resource viewer (PDF viewer with watermark, video player, worksheet download), premium lock states with upgrade prompt.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Learning workspace, assessments & progress",
+      "weeks": 4,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 7
+      },
+      "total": 7,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P6.1",
+          "title": "Learner workspace: dashboard (continue learning, upcoming classes, assigned work, recent activity), my subjects, bookmarks, recently viewed, learning history.",
+          "status": "todo"
+        },
+        {
+          "id": "P6.2",
+          "title": "Activity tracking (resource opened/completed, time on task — privacy-aware) and topic progress.",
+          "status": "todo"
+        },
+        {
+          "id": "P6.3",
+          "title": "Question bank: questions with types (multiple choice, multiple select, true/false, short answer, long answer, matching, ordering), options, marking schemes, difficulty, taxonomy tags; versioned.",
+          "status": "todo"
+        },
+        {
+          "id": "P6.4",
+          "title": "Assessments: topical exercises, timed tests, mock exams; assembly from the bank; publishing via the content review workflow; availability windows and attempt limits.",
+          "status": "todo"
+        },
+        {
+          "id": "P6.5",
+          "title": "Attempts: server-side timer enforcement, autosave, submission, automatic marking for objective types, manual grading queue for subjective answers, results with feedback and answer review (when policy allows).",
+          "status": "todo"
+        },
+        {
+          "id": "P6.6",
+          "title": "Progress analytics: per subject/topic mastery, assessment performance, timeline; role-controlled visibility (learner, linked guardian, assigned teacher, staff).",
+          "status": "todo"
+        },
+        {
+          "id": "P6.7",
+          "title": "Frontend: learner dashboard, assessment player (mobile-first, resilient to connection drops), results; Teacher Arena grading inbox and grading screen; Family portal progress views.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Plans, entitlements, manual payments & exam papers store",
+      "weeks": 6,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 20
+      },
+      "total": 20,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P7.1",
+          "title": "Plans as data (audience, ISO-8601 duration, price in KES, entitlement set); plan management in Staff Console; plan comparison page data.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.2",
+          "title": "Entitlement engine: grant, consume (credits), expire, revoke; `HasEntitlement` checks used by content (P5.3) and booking (P8).",
+          "status": "todo"
+        },
+        {
+          "id": "P7.3",
+          "title": "Orders and invoices with references (`PHX-…`); invoice PDF; expiry of unpaid invoices.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.4",
+          "title": "Payment submissions (code, amount, phone, time, optional proof) with idempotency and global uniqueness of M-PESA codes; finance notification on every submission.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.5",
+          "title": "Finance queue: confirm / reject / partial, separation of duties, SLA reminders; confirmation activates subscription and entitlements in one transaction; receipts.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.6",
+          "title": "Subscriptions: activation, expiry job, renewal reminders, cancellation, suspension.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.7",
+          "title": "Teacher onboarding fee and licence through the same flow; activates Teacher status `Active` (completes Phase 3's pending step).",
+          "status": "todo"
+        },
+        {
+          "id": "P7.8",
+          "title": "Refunds (recorded, audited, entitlement effects) and reconciliation report against Paybill statements; exports (CSV).",
+          "status": "todo"
+        },
+        {
+          "id": "P7.9",
+          "title": "`IPaymentProvider` abstraction with `ManualPaybillProvider`; contract tests ready for Daraja later.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.10",
+          "title": "Frontend: pricing/plan selection, checkout with Paybill instructions, payment confirmation form, payment status and history, receipts; guardian paying for linked learners; Staff Console → Finance (queue, payment detail, invoices, refunds, reconciliation, reports).",
+          "status": "todo"
+        },
+        {
+          "id": "P7.11",
+          "title": "Store catalogue: store products over exam-paper resources (single paper, subject bundle, grade/term bundle, \"full set\" bundle); price in KES per product (O-15); publish/unpublish; featured and new; product pages with a free preview (cover page and instructions only, watermarked).",
+          "status": "todo"
+        },
+        {
+          "id": "P7.12",
+          "title": "Store search and filters: grade, subject, exam type, year, term; sort by newest/popular; SEO-friendly public pages (server-rendered, structured data).",
+          "status": "todo"
+        },
+        {
+          "id": "P7.13",
+          "title": "Buyers: learners, guardians, teachers and members of the public. Checkout requires a verified buyer account (lightweight: name, email, phone, county), per O-17. Cart with several papers and bundles; one invoice per order.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.14",
+          "title": "Payment through the Part A manual Paybill flow. On confirmation, an item-level entitlement (`store.paper:{id}`) is granted to the buyer and receipt sent.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.15",
+          "title": "Fulfilment: \"My purchases\" library; download generates a personalised, watermarked PDF on the server (buyer name, email/phone, order number, date on every page) from the private master; download limit and expiring links per policy; in-browser viewing; every download logged.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.16",
+          "title": "Marking-scheme requests: request from a purchased paper (or bundle); policy engine per O-16 (included / priced / approval required / release date / role-based, e.g. verified teachers and guardians); staff review queue (Academic Reviewer or Content Manager) with approve/decline and reason; payment step when priced; fulfilment as watermarked PDF; requester notified at each step; full audit.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.17",
+          "title": "Store operations: Staff Console → Store (products, bundles, pricing, featured, sales, downloads, marking-scheme queue); refunds for store orders through Part A refunds; abuse controls (download anomalies, shared-link detection, rate limits).",
+          "status": "todo"
+        },
+        {
+          "id": "P7.18",
+          "title": "Institutional buyers (schools, tuition centres, homeschool groups): organisation account, bulk order with quantity-based licence and invoice, multiple named downloaders. Ships if O-15 confirms institutional pricing; otherwise moved to Phase 12.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.19",
+          "title": "Store reports: sales by paper, subject, grade, county and period; conversion from preview to purchase; marking-scheme request volumes and turnaround.",
+          "status": "todo"
+        },
+        {
+          "id": "P7.20",
+          "title": "Frontend: public store (`/exams`, product pages, cart, checkout), buyer library (`/account/purchases`), marking-scheme request flow and status; Staff Console store and request queue.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Virtual classes, booking & attendance",
+      "weeks": 4,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 8
+      },
+      "total": 8,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P8.1",
+          "title": "Class offerings (1:1 and group), capacity, duration, subject/topic, teacher assignment, materials (linked resources), status.",
+          "status": "todo"
+        },
+        {
+          "id": "P8.2",
+          "title": "Teacher availability: weekly rules, exceptions, blocked periods, Africa/Nairobi time handling; conflict detection.",
+          "status": "todo"
+        },
+        {
+          "id": "P8.3",
+          "title": "Booking state machine (Requested → Confirmed → Scheduled → Completed / Cancelled / No-show) with entitlement or credit check at confirmation, transactional capacity control (row lock / constraint) so the last seat can't be double-booked, and conflict checks against availability and pending bookings.",
+          "status": "todo"
+        },
+        {
+          "id": "P8.4",
+          "title": "Rescheduling and cancellation rules (O-05) with credit effects.",
+          "status": "todo"
+        },
+        {
+          "id": "P8.5",
+          "title": "Sessions: manual Meet link entry and validation; link visible only to entitled participants; reminders (24 h, 2 h, 15 min) and \"link missing\" reminders.",
+          "status": "todo"
+        },
+        {
+          "id": "P8.6",
+          "title": "Join through the platform (join events), attendance marking by teacher, session notes, learner feedback/ratings (if approved), no-show handling, incident flag to safeguarding.",
+          "status": "todo"
+        },
+        {
+          "id": "P8.7",
+          "title": "Teacher earnings ledger entries per completed session (payouts manual per O-03).",
+          "status": "todo"
+        },
+        {
+          "id": "P8.8",
+          "title": "Frontend: class discovery and booking (learner/guardian), my schedule (calendar + list), session page with join button; Teacher Arena availability editor, class management, attendance and notes; Staff Console → Classes (schedule, assignments, interventions).",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Communication, support & collaboration",
+      "weeks": 3,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 5
+      },
+      "total": 5,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P9.1",
+          "title": "Notification centre: in-app inbox, email channel, templates per event, user preferences, digest options; SMS channel interface (disabled until provider chosen).",
+          "status": "todo"
+        },
+        {
+          "id": "P9.2",
+          "title": "Announcements: targeted by role, grade, class; scheduled; read tracking.",
+          "status": "todo"
+        },
+        {
+          "id": "P9.3",
+          "title": "Support desk: tickets with categories, priority, SLA, assignment, internal notes, escalation, attachments (validated), satisfaction rating; contextual \"Get help\" from any screen.",
+          "status": "todo"
+        },
+        {
+          "id": "P9.4",
+          "title": "Teacher collaboration: contribution workspace on shared drafts, comments, attribution and contribution history; class-scoped Q&A visible to staff (no free-form learner DMs at launch).",
+          "status": "todo"
+        },
+        {
+          "id": "P9.5",
+          "title": "Frontend: notification bell and centre, preferences; Support (all users) and Staff Console → Support queue; collaboration views in Teacher Arena.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Administration, reporting, audit & safeguarding",
+      "weeks": 3,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 7
+      },
+      "total": 7,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P10.1",
+          "title": "Administration: system settings (typed, validated, audited), feature flags, maintenance mode, organisation profile, notification templates editor.",
+          "status": "todo"
+        },
+        {
+          "id": "P10.2",
+          "title": "Reporting: management dashboard (learners, teachers, content, subscriptions, revenue, exam paper sales, classes, attendance, assessments), report pages with filters and CSV export, export jobs for large reports; read models where queries are heavy.",
+          "status": "todo"
+        },
+        {
+          "id": "P10.7",
+          "title": "National operations view: learners, guardians, teachers, buyers, sales and class activity by county (from profile county), teacher coverage per subject and county, service-level indicators (payment confirmation time, review turnaround, support response) so Phronesis can run and grow operations across Kenya.",
+          "status": "todo"
+        },
+        {
+          "id": "P10.3",
+          "title": "Audit explorer: search by actor, entity, action, date; entity history views (teacher, resource, payment); retention policy job.",
+          "status": "todo"
+        },
+        {
+          "id": "P10.4",
+          "title": "Data-subject rights (Kenya Data Protection Act): access/export and deletion requests workflow with approval, anonymisation strategy that preserves financial/audit records.",
+          "status": "todo"
+        },
+        {
+          "id": "P10.5",
+          "title": "Safeguarding: \"Report a concern\" on learner/teacher surfaces, concern triage by Safeguarding Lead, user restrictions and blocks, content takedown, incident records, escalation rules; security incident workflow runbook.",
+          "status": "todo"
+        },
+        {
+          "id": "P10.6",
+          "title": "Frontend: Staff Console dashboard and reports, audit explorer, safeguarding workspace, settings.",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Public website, hardening & launch",
+      "weeks": 3,
+      "counts": {
+        "done": 0,
+        "in-progress": 0,
+        "blocked": 0,
+        "todo": 12
+      },
+      "total": 12,
+      "percent": 0,
+      "exited": false,
+      "state": "Not started",
+      "items": [
+        {
+          "id": "P11.1.1",
+          "title": "Home, About (mission, values, Christ-centred education), How it works (learners, guardians, teachers), Subjects & grades (from taxonomy, with resource previews), Exam papers store entry points, Pricing (from plans), Live classes, Apply to teach, FAQ, Contact, Legal (terms, privacy, refund, safeguarding, exam-paper licence terms, cookie notice).",
+          "status": "todo"
+        },
+        {
+          "id": "P11.1.2",
+          "title": "SEO: metadata, Open Graph images in the new brand, sitemap, robots, structured data (EducationalOrganization).",
+          "status": "todo"
+        },
+        {
+          "id": "P11.1.3",
+          "title": "Performance budgets met on simulated 4G.",
+          "status": "todo"
+        },
+        {
+          "id": "P11.2.1",
+          "title": "Security review against OWASP ASVS L2 checklist; OWASP ZAP baseline scan; fix all high/medium findings.",
+          "status": "todo"
+        },
+        {
+          "id": "P11.2.2",
+          "title": "Load test (k6) at 3× expected launch traffic on staging-sized resources; tune PostgreSQL and caching.",
+          "status": "todo"
+        },
+        {
+          "id": "P11.2.3",
+          "title": "Accessibility audit (WCAG 2.2 AA) of the five core journeys.",
+          "status": "todo"
+        },
+        {
+          "id": "P11.2.4",
+          "title": "Backup restore drill from production-like data; disaster recovery runbook with RPO 24 h / RTO 4 h.",
+          "status": "todo"
+        },
+        {
+          "id": "P11.2.5",
+          "title": "Alert routing tested end to end.",
+          "status": "todo"
+        },
+        {
+          "id": "P11.3.1",
+          "title": "Production data: Super Admin and staff accounts via invitation; plans, taxonomy, initial content loaded and reviewed.",
+          "status": "todo"
+        },
+        {
+          "id": "P11.3.2",
+          "title": "User acceptance testing with Phronesis staff, a few teachers, guardians and learners; sign-off per journey.",
+          "status": "todo"
+        },
+        {
+          "id": "P11.3.3",
+          "title": "Staff training: finance confirmations, reviews, support, safeguarding (short guides in `docs/runbooks/`).",
+          "status": "todo"
+        },
+        {
+          "id": "P11.3.4",
+          "title": "Release `v1.0.0`; go-live checklist; two weeks of hypercare with daily checks of errors, payment queue and support tickets.",
+          "status": "todo"
+        }
+      ]
+    }
+  ],
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "Foundation on staging",
+      "phase": 1,
+      "reached": false
+    },
+    {
+      "id": "M2",
+      "name": "First verified teacher",
+      "phase": 3,
+      "reached": false
+    },
+    {
+      "id": "M3",
+      "name": "First published lesson",
+      "phase": 5,
+      "reached": false
+    },
+    {
+      "id": "M4",
+      "name": "First paid learner",
+      "phase": 7,
+      "reached": false
+    },
+    {
+      "id": "M4b",
+      "name": "First exam paper sold",
+      "phase": 7,
+      "reached": false
+    },
+    {
+      "id": "M5",
+      "name": "First live class",
+      "phase": 8,
+      "reached": false
+    },
+    {
+      "id": "M6",
+      "name": "Operational readiness",
+      "phase": 10,
+      "reached": false
+    },
+    {
+      "id": "M7",
+      "name": "Public launch",
+      "phase": 11,
+      "reached": false
+    }
+  ],
+  "decisionsDue": [
+    {
+      "id": "O-10",
+      "question": "Domains: production and staging hostnames, email sending domain.",
+      "gate": "Phase 1",
+      "gatePhase": 1
+    },
+    {
+      "id": "O-11",
+      "question": "Transactional email provider.",
+      "gate": "Phase 1",
+      "gatePhase": 1
+    },
+    {
+      "id": "O-12",
+      "question": "Vector logo files (SVG/PDF) from the logo designer. Current files are WhatsApp JPEGs.",
+      "gate": "Phase 1 (brand tokens can start from the JPEG colours)",
+      "gatePhase": 1
+    },
+    {
+      "id": "O-14",
+      "question": "Launch date and must-have list.",
+      "gate": "Phase 0",
+      "gatePhase": 0
+    }
+  ]
+}

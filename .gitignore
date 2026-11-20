@@ -87,3 +87,6 @@ project.lock.json
 
 # System generated artifacts
 .gemini/
+
+# User-uploaded files (teacher documents, content media) must never be committed
+src/Phronesis.Api/wwwroot/uploads/
