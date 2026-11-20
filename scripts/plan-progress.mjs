@@ -150,8 +150,9 @@ const json = JSON.stringify({
 }, null, 2) + '\n';
 
 if (process.argv.includes('--check')) {
-  const stale = !fs.existsSync(outMd) || fs.readFileSync(outMd, 'utf8') !== mdText
-    || !fs.existsSync(outJson) || fs.readFileSync(outJson, 'utf8') !== json;
+  const read = f => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n'); // tolerate CRLF checkouts on Windows
+  const stale = !fs.existsSync(outMd) || read(outMd) !== mdText
+    || !fs.existsSync(outJson) || read(outJson) !== json;
   if (stale) {
     console.error('docs/plan/PROGRESS.md is out of date. Run: node scripts/plan-progress.mjs');
     process.exit(1);
